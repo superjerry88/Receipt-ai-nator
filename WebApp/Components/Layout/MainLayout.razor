@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="dark bg-gray-800 min-h-screen flex flex-col  text-gray-200 body-font">
-    <header class="bg-gray-900 p-2 ps-4 flex justify-between items-center ">
+    <header class="bg-gray-900 p-2 ps-4 flex justify-between items-center sticky top-0 z-50">
         <a href="/" class="font-bold text-white">LOGO</a>
 
         <!-- Icons for desktop view -->
@@ -10,7 +10,7 @@
             <TabMenu></TabMenu>
         </nav>
 
-        
+    
         <a href="/counter" 
            class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
             <Icon Name="IconName.Bars" IconSize="IconSize.Large"></Icon>
@@ -18,7 +18,7 @@
     </header>
 
     <!-- Main content area where @Body will be rendered -->
-    <main class="flex-grow p-4 mx-auto" style="max-width: 1200px;">
+    <main class="flex-grow pt-4 pb-4 mx-auto" style="max-width: 1200px;">
         @Body
     </main>
 
