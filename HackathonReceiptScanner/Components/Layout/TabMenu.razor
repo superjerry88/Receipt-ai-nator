@@ -1,0 +1,37 @@
+﻿<a class=" w-6 h-6 flex items-center justify-center" href="/page1">1</a>
+<a class=" w-6 h-6 flex items-center justify-center" href="#">2</a>
+<a class=" w-6 h-6 flex items-center justify-center" href="#">3</a>
+<a class=" w-6 h-6 flex items-center justify-center" href="#">4</a>
+<a class=" w-6 h-6 flex items-center justify-center" href="#">5</a>
+
+<button @onclick="@OnClick" class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+    <i class="fas fa-regular fa-bell"></i>
+    <span class="text-xs mt-1">Bell</span>
+</button>
+
+<button class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+    <i class="fas fa-regular fa-bell"></i>
+    <span class="text-xs mt-1">Bell</span>
+</button>
+
+<button class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+    <i class="fas fa-regular fa-bell"></i>
+    <span class="text-xs mt-1">Bell</span>
+</button>
+
+<button class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+    <i class="fas fa-regular fa-bell"></i>
+    <span class="text-xs mt-1">Bell</span>
+</button>
+
+<button class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+    <i class="fas fa-regular fa-bell"></i> 
+    <span class="text-xs mt-1">Bell</span> 
+</button>
+
+@code{
+    public void OnClick()
+    {
+        Console.WriteLine("Clicked");
+    }
+}

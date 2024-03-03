@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+
+<div class="dark bg-gray-800 min-h-screen flex flex-col  text-gray-200 body-font">
+    <header class="bg-gray-900 p-2 ps-4 flex justify-between items-center ">
+        <a href="/" class="font-bold text-white">LOGO</a>
+
+        <!-- Icons for desktop view -->
+        <nav class="hidden md:flex space-x-12 ml-4">
+            <!-- Use your actual icons here -->
+            <TabMenu></TabMenu>
+        </nav>
+
+        
+        <a href="/counter" 
+           class="flex flex-col items-center justify-center p-2 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <Icon Name="IconName.Bars" IconSize="IconSize.Large"></Icon>
+        </a>
+    </header>
+
+    <!-- Main content area where @Body will be rendered -->
+    <main class="flex-grow p-4 mx-auto" style="max-width: 1200px;">
+        @Body
+    </main>
+
+    <!-- Icons for mobile view -->
+    <nav class="bg-gray-900 text-gray-400 border-t-2 border-stone-500 p-2 flex justify-around md:hidden fixed inset-x-0 bottom-0 z-10">
+        <!-- Use your actual icons here -->
+        <TabMenu></TabMenu>
+    </nav>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

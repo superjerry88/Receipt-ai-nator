@@ -1,9 +1,36 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<div class="dark bg-gray-800 min-h-screen flex flex-col  text-gray-200 body-font">
+    <header class="bg-gray-900 p-4 flex justify-between items-center ">
+        <span class="font-bold text-white">LOGO</span>
+
+        <!-- Icons for desktop view -->
+        <nav class="hidden md:flex space-x-12 ml-4">
+            <!-- Use your actual icons here -->
+            <TabMenu></TabMenu>
+        </nav>
+
+
+        <button class="w-8 h-8 flex items-center justify-center">
+            MENU
+        </button>
+    </header>
+
+    <!-- Main content area where @Body will be rendered -->
+    <main class="flex-grow p-4 mx-auto" style="max-width: 1200px;">
+        @Body
+    </main>
+
+    <!-- Icons for mobile view -->
+    <nav class="bg-gray-900 text-gray-400 border-t-2 border-stone-500 p-4 flex justify-around md:hidden fixed inset-x-0 bottom-0 z-10">
+        <!-- Use your actual icons here -->
+        <TabMenu></TabMenu>
+    </nav>
+</div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+

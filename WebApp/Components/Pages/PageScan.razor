@@ -1,0 +1,16 @@
+﻿@page "/PageScan"
+
+
+<input type="file" accept="image/*" capture="user" @onchange="HandleImageCapture" />
+
+@code {
+    private async Task HandleImageCapture(ChangeEventArgs e)
+    {
+        var imageFiles = e.Value as IReadOnlyList<IBrowserFile>;
+        if (imageFiles != null && imageFiles.Count > 0)
+        {
+            var imageFile = imageFiles[0];
+            Console.WriteLine(imageFile.Name);
+        }
+    }
+}
