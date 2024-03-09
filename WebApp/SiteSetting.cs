@@ -1,8 +1,16 @@
-﻿namespace WebApp
+﻿using System.Security.Principal;
+
+namespace WebApp
 {
     public class SiteSetting
     {
         public string DbConnectionString { get; set; } = "";
+
+        public string DbHost { get; set; } = "";
+        public int DbPort { get; set; }
+        public string DbAuth { get; set; } = "";
+        public string DbUsername { get; set; } = "";
+        public string DbPassword { get; set; } = "";
 
         public string DbName { get; set; } = "";
 
