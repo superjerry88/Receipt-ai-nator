@@ -36,5 +36,7 @@ namespace WebApp
         /// </summary>
         public string OcrProcessingEndpoint { get; set; } = "";
 
+        public long MaxImageSize { get; set; } = 0;
+
     }
 }
