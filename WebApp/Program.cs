@@ -1,6 +1,7 @@
 using Blazorise;
 using Blazorise.Icons.FontAwesome;
 using Blazorise.Tailwind;
+using Microsoft.Extensions.FileProviders;
 using WebApp.Components;
 using WebApp.Services;
 
@@ -35,5 +36,13 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+
+app.UseStaticFiles(new StaticFileOptions()
+{
+    ServeUnknownFileTypes = true,
+    FileProvider = new PhysicalFileProvider(RezApi.Settings.StoragePath),
+    RequestPath = new PathString("/files")
+});
 
 app.Run();
