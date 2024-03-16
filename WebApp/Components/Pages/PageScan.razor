@@ -1,16 +1,70 @@
 ﻿@page "/PageScan"
+<!-- This single line costed 2 hours of googling and forum diving -->
+<!-- Todo: raise an issue to update their outdated ass doc  -->
+@rendermode InteractiveServer
 
+@if (_copyStatus is { IsSuccess: false })
+{
+    <Alert Color="Color.Danger" Visible>
+        <AlertMessage>Error Copying</AlertMessage>
+        <AlertDescription>@_copyStatus.Message</AlertDescription>
+    </Alert>
+}
 
-<input type="file" accept="image/*" capture="user" @onchange="HandleImageCapture" />
+@if (_processStatus is { IsSuccess: false })
+{
+    <Alert Color="Color.Danger" Visible>
+     <AlertMessage>Error Processing</AlertMessage>
+     <AlertDescription>@_processStatus.Message</AlertDescription>
+        </Alert>
+}
+
+@if (_imageInfo == null)
+{
+    <InputFile accept="image/*" OnChange="HandleImageCapture" />
+}
+
+@if (_imageInfo != null && _imageInfo.IsImage)
+{
+    <img src="@_imageInfo.UrlPath" alt="Preview" style="max-width: 100%; max-height: 800px;" />
+    <button @onclick="Cancel">Cancel</button>
+    <button @onclick="Submit">Submit</button>
+}
 
 @code {
-    private async Task HandleImageCapture(ChangeEventArgs e)
+    private ImageInfo? _imageInfo = null;
+    private ImageInfoStatus? _copyStatus = null;
+    private ImageInfoStatus? _processStatus = null;
+
+    private async Task HandleImageCapture(InputFileChangeEventArgs e)
     {
-        var imageFiles = e.Value as IReadOnlyList<IBrowserFile>;
-        if (imageFiles != null && imageFiles.Count > 0)
+        var imageFiles = e.GetMultipleFiles(1);
+        if (imageFiles.Count > 0)
         {
             var imageFile = imageFiles[0];
-            Console.WriteLine(imageFile.Name);
+            _imageInfo = new ImageInfo(imageFile);
+            _copyStatus = await _imageInfo.CopyToLocalPath(imageFile);
+            _processStatus =  _imageInfo.ProcessImage();
+
+            if(_copyStatus.IsSuccess && _processStatus.IsSuccess)
+            {
+                // Do something with the image
+            }
+            else
+            {
+                Cancel();
+            }
+            
         }
+    }
+
+    private void Cancel()
+    {
+        _imageInfo = null;
+    }
+
+    private void Submit()
+    {
+        // Handle the submit action (e.g., upload the image to a server)
     }
 }
