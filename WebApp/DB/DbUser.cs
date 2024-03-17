@@ -19,6 +19,23 @@ public class DbUser : DbBase
         await Collection.InsertOneAsync(user);
     }
 
+    public async Task AddOrUpdateUser(User user)
+    {
+        await Collection.ReplaceOneAsync(x => x.Id == user.Id, user, new ReplaceOptions { IsUpsert = true });
+    }
+
+    public async Task<User?> Login(string username, string password)
+    {
+        var user = await Collection.AsQueryable().Where(c => c.Username.Equals(username, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
+        if (user == null) return null;
+        if (!user.CheckPassword(password)) return null;
+
+        user.LastLogin = DateTime.Now;
+        await AddOrUpdateUser(user);
+
+        return user;
+    }
+
     public async Task<List<User>> GetAllUser()
     {
         return await Collection.AsQueryable().ToListAsync();
@@ -29,8 +46,13 @@ public class DbUser : DbBase
         return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Id == userId);
     }
 
-    public async Task<User> GetByUsername(string username)
+    public async Task<User?> GetByUsername(string username)
     {
         return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Username == username);
+    }
+
+    public async Task<User?> GetByEmail(string email)
+    {
+        return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
     }
 }
