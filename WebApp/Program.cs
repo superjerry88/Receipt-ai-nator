@@ -17,6 +17,9 @@ builder.Services
     .AddTailwindProviders()
     .AddFontAwesomeIcons();
 
+builder.Services.AddScoped<CookieService>();
+builder.Services.AddScoped<CurrentSession>();
+
 // Add custom SiteSetting service
 builder.Configuration.AddSiteBinding();
 
