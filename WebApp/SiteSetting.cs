@@ -24,6 +24,10 @@ namespace WebApp
         /// </summary>
         public string JwtSeed { get; set; } = "";
 
+        public List<string> AdminSignup { get; set; } = new List<string>();
+
+        public bool UseMock { get; set; } = false;
+
         //Temporary
 
         /// <summary>
