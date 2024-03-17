@@ -1,0 +1,67 @@
+﻿@page "/login"
+@layout EmptyLayout
+@inject CurrentSession CurrentSession
+@inject CookieService CookieService
+@inject NavigationManager NavigationManager
+
+<h3>LoginPage</h3>
+
+<div>
+    <Field>
+        <FieldLabel>Username</FieldLabel>
+        <TextEdit @bind-Text="Username">
+        </TextEdit>
+    </Field>
+
+    <Field>
+        <FieldLabel>Password</FieldLabel>
+        <TextEdit Role="TextRole.Password" @bind-Text="Password">
+        </TextEdit>
+    </Field>
+    
+    <Button Clicked="Login">
+        Login
+    </Button>
+    
+    <Button Clicked="Signup">
+        Signup
+    </Button>
+</div>
+
+@code {
+    public string? Username { get; set; }
+    public string? Password { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var currentUser = await CurrentSession.GetUser();
+            if(currentUser != null)
+            {
+                NavigationManager.NavigateTo("/welcome");
+            }
+        }
+    }
+
+    public async void Login()
+    {
+        var user = await RezApi.DbManager.Get<DbUser>().Login(Username,Password);
+        if(user != null)
+        {
+            //todo: Make session lifetime configurable
+            await CookieService.SetCookie(RezApi.JwtHelper.Generate(user));
+            NavigationManager.NavigateTo("/welcome");
+        }
+        else
+        {
+            Console.WriteLine("FAILED TO LOGIN");
+        }
+    }
+
+    public async void Signup()
+    {
+        NavigationManager.NavigateTo("/signup");
+    }
+
+}
