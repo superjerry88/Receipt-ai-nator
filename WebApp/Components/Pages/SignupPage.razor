@@ -1,0 +1,93 @@
+﻿@layout EmptyLayout
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject CurrentSession CurrentSession
+@inject CookieService CookieService
+@page "/signup"
+
+<div>
+    <Field>
+        <FieldLabel>Email</FieldLabel>
+        <TextEdit Role="TextRole.Email" @bind-Text="User.Email">
+        </TextEdit>
+    </Field>
+
+    <Field>
+        <FieldLabel>Username</FieldLabel>
+        <TextEdit @bind-Text="User.Username">
+        </TextEdit>
+    </Field>
+
+    <Field>
+        <FieldLabel>Password</FieldLabel>
+        <TextEdit Role="TextRole.Password" @bind-Text="User.Password">
+        </TextEdit>
+    </Field>
+
+    <Field>
+        <FieldLabel >Repeat Password</FieldLabel>
+        <TextEdit Role="TextRole.Password" Text="@User.PasswordConfirm" TextChanged="CheckSame">
+            <FieldHelp>
+                <Text TextColor="@PasswordSameColor">@PasswordSameText</Text>
+            </FieldHelp>
+        </TextEdit>
+    </Field>
+
+    <Button Clicked="Signup">
+        Sign Up
+    </Button>
+
+    <Button Clicked="BackToLogin">
+        Back to Login
+    </Button>
+</div>
+
+
+
+@code {
+    private UserSignUp User { get; set; }  = new UserSignUp();
+
+    private string? PasswordSameText { get; set; }
+    private TextColor PasswordSameColor { get; set; } = TextColor.Default;
+
+    private bool ValidUsername { get; set; } = true;
+    private bool ValidEmail { get; set; } = true;
+
+    private async void Signup()
+    {
+        ValidUsername = await User.ValidateUsername();
+        ValidEmail = await User.ValidateEmail();
+        if(ValidEmail && ValidUsername && User.MatchingPassword())
+        {
+            var actualUser = await User.Signup();
+            await CookieService.SetCookie(RezApi.JwtHelper.Generate(actualUser));
+            NavigationManager.NavigateTo("/welcome");
+            Console.WriteLine("Signup success");
+        }
+        else
+        {
+            Console.WriteLine("FAILED TO SIGNUP");
+        }
+    }
+
+    private void BackToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void CheckSame(string password)
+    {
+        User.PasswordConfirm = password;
+        if(User.MatchingPassword())
+        {
+            PasswordSameText = "Same";
+            PasswordSameColor = TextColor.Success;
+        }
+        else
+        {
+            PasswordSameText = "Password is not same";
+            PasswordSameColor = TextColor.Danger;
+        }
+    }
+
+}
