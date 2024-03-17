@@ -48,11 +48,11 @@ public class DbUser : DbBase
 
     public async Task<User?> GetByUsername(string username)
     {
-        return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Username == username);
+        return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Username == username.ToLower());
     }
 
     public async Task<User?> GetByEmail(string email)
     {
-        return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
+        return await Collection.AsQueryable().FirstOrDefaultAsync(x => x.Email == email.ToLower());
     }
 }

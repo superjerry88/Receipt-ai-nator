@@ -6,6 +6,24 @@
 @page "/signup"
 
 <div>
+    @if(!ValidUsername)
+    {
+        <Alert Color="Color.Danger" Visible>
+            <AlertMessage>Error!</AlertMessage>
+            <AlertDescription>Username already taken</AlertDescription>
+        </Alert>
+    }
+    
+    @if(!ValidEmail)
+    {
+        <Alert Color="Color.Danger" Visible>
+            <AlertMessage>Error!</AlertMessage>
+            <AlertDescription>Email already taken</AlertDescription>
+        </Alert>
+    }
+</div>
+
+<div>
     <Field>
         <FieldLabel>Email</FieldLabel>
         <TextEdit Role="TextRole.Email" @bind-Text="User.Email">
@@ -67,6 +85,7 @@
         else
         {
             Console.WriteLine("FAILED TO SIGNUP");
+            await InvokeAsync(StateHasChanged);
         }
     }
 

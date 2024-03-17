@@ -14,9 +14,9 @@
 @if (_processStatus is { IsSuccess: false })
 {
     <Alert Color="Color.Danger" Visible>
-     <AlertMessage>Error Processing</AlertMessage>
-     <AlertDescription>@_processStatus.Message</AlertDescription>
-        </Alert>
+        <AlertMessage>Error Processing</AlertMessage>
+        <AlertDescription>@_processStatus.Message</AlertDescription>
+    </Alert>
 }
 
 @if (_imageInfo == null)

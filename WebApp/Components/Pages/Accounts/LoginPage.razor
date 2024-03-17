@@ -6,6 +6,16 @@
 
 <h3>LoginPage</h3>
 
+@* Invisible Alerts *@
+@if(FailedLogin)
+{
+    <Alert Color="Color.Danger" Visible>
+        <AlertMessage>Error!</AlertMessage>
+        <AlertDescription>Incorrect Credentials</AlertDescription>
+    </Alert>
+}
+
+@* Input fields  *@
 <div>
     <Field>
         <FieldLabel>Username</FieldLabel>
@@ -32,6 +42,8 @@
     public string? Username { get; set; }
     public string? Password { get; set; }
 
+    public bool FailedLogin { get; set; } = false;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -55,7 +67,8 @@
         }
         else
         {
-            Console.WriteLine("FAILED TO LOGIN");
+            FailedLogin = true;
+            await InvokeAsync(StateHasChanged);
         }
     }
 
