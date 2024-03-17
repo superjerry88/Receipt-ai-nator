@@ -1,4 +1,4 @@
-﻿namespace HackathonReceiptScanner
+﻿namespace WebApp.Model.Receipts
 {
     public class ScanResult
     {
@@ -22,7 +22,7 @@
         public double TotalTax { get; set; }
         public double TotalPrice { get; set; }
         public double TotalPriceWithoutTax { get; set; }
-        public Dictionary<string,string> OtherValues { get; set; }
+        public Dictionary<string, string> OtherValues { get; set; }
     }
     public class Items
     {
@@ -30,10 +30,10 @@
         public string? ProductCode { get; set; } //Put if applicable
         public string? Category { get; set; } //Used to predefine list
         public string? Description { get; set; } //Generate a short description for the given name.
-        public double PricePerItem { get; set; } 
-        public int Quantity { get; set; } 
+        public double PricePerItem { get; set; }
+        public int Quantity { get; set; }
         public double TotalPrice => PricePerItem * Quantity;
-        public bool TaxInclusive {get; set; }
+        public bool TaxInclusive { get; set; }
         public double Confidence { get; set; } // 0.0 = no confidence, 0.25 = low confidence, 0.75 = high confidence ,1.0 = full confidence
     }
 }

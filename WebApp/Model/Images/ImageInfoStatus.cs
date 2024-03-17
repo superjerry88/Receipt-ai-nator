@@ -1,4 +1,4 @@
-﻿namespace WebApp.Model;
+﻿namespace WebApp.Model.Images;
 
 public class ImageInfoStatus
 {

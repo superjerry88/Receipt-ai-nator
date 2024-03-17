@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using MongoDB.Bson.Serialization.Attributes;
 using WebApp.Services;
 
-namespace WebApp.Model;
+namespace WebApp.Model.Images;
 
 #pragma warning disable CA1416
 public class ImageInfo
@@ -103,7 +103,7 @@ public class ImageInfo
         double minutes = BitConverter.ToInt32(coordinates, 4);
         double seconds = BitConverter.ToInt32(coordinates, 8);
 
-        return degrees + (minutes / 60) + (seconds / 3600);
+        return degrees + minutes / 60 + seconds / 3600;
     }
 }
 #pragma warning restore CA1416
