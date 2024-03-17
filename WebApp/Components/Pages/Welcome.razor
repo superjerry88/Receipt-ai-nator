@@ -1,0 +1,17 @@
+﻿@page "/welcome"
+@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+
+<h3>Welcome</h3>
+
+<Button Clicked="Logout">Logout</Button>
+
+@code {
+
+    private async void Logout()
+    {
+        await CurrentSession.ClearSession();
+        NavigationManager.NavigateTo("/login");
+    }
+
+}
