@@ -63,8 +63,24 @@
         _imageInfo = null;
     }
 
-    private void Submit()
+    private async void Submit()
     {
+        try
+        {
+            if(_imageInfo == null)
+            {
+                return;
+            }
+
+            var client = RezApi.AiManager.GetClient();
+            await client.Try(_imageInfo.LocalFilePath);
+            Console.WriteLine("Done");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
         // Handle the submit action (e.g., upload the image to a server)
     }
 }
