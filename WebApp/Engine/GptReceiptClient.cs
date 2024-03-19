@@ -10,14 +10,21 @@ using WebApp.Services;
 
 namespace WebApp.Engine;
 
-public class GptReceiptClient(string apiKey) : IJob
+public class GptReceiptClient : IJob
 {
     public const string PromptFile = "OCRV001";
+    private bool IsSiteToken { get; }= false;
 
-    private OpenAIService Client { get; } = new(new OpenAiOptions()
+    public GptReceiptClient(string apiKey)
     {
-        ApiKey = apiKey
-    });
+        Client = new(new OpenAiOptions()
+        {
+            ApiKey = apiKey,
+        });
+        IsSiteToken = apiKey == RezApi.Settings.OpenAiApiKey;
+    }
+
+    private OpenAIService Client { get; }
 
     public static async Task<bool> ValidateOpenAiKey(string apiKey)
     {
@@ -71,7 +78,10 @@ public class GptReceiptClient(string apiKey) : IJob
         var filename = "Res" + DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6] + ".json";
         await File.WriteAllTextAsync(Path.Combine(RezApi.Files.ResponseFolderPath, filename), json);
         var scanResult = JsonConvert.DeserializeObject<ScanResult>(json)!;
+
         scanResult.TokenConsumed = completionResult.Usage.TotalTokens;
+        scanResult.UsingSiteToken = IsSiteToken;
+
         return scanResult;
     }
 
