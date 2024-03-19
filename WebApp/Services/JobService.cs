@@ -54,12 +54,11 @@ public class JobService
 
     public async Task<ScanTask> GetTestClient()
     {
-
         return await AddJob(new TestClient());
     }
 
-    public GptReceiptClient GetGptClient(User user)
+    public async Task<ScanTask> GetGptClient(User user)
     {
-        throw new NotImplementedException();
+        return await AddJob(new GptReceiptClient(user.GetApiKey()));
     }
 }

@@ -101,6 +101,7 @@
             else
             {
                 Console.WriteLine("[WARNING] YOU ARE NOT USING MOCK [WARNING]");
+                //todo Use User's API Key if valid here
                 scanTask = await RezApi.Jobs.GetGptClient();
                 scanTask.DoJob(_imageInfo);
             }
