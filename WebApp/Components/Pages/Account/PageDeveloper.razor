@@ -1,12 +1,174 @@
 ﻿@page "/account/developer"
+@inject CurrentSession CurrentSession
 
-<Breadcrumb>
-    <BreadcrumbItem>
-        <BreadcrumbLink To="/account">Account</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbItem Active>
-        <BreadcrumbLink To="#">Developer</BreadcrumbLink>
-    </BreadcrumbItem>
-</Breadcrumb>
 
-<ComingSoon></ComingSoon>
+<div>
+    <Breadcrumb >
+        <BreadcrumbItem>
+            <BreadcrumbLink To="/account">Account</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem Active>
+            <BreadcrumbLink To="#">Developer</BreadcrumbLink>
+        </BreadcrumbItem>
+    </Breadcrumb>
+    
+    <Column ColumnSize="ColumnSize.Is6.OnTablet" Class="p-4">
+        <Card Class="p-4">
+            <Heading Size="HeadingSize.Is6"> Documentation </Heading> 
+            Rez API's documentation and playground is available <Link href="/swagger" >here</Link>
+        </Card>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is6.OnTablet">
+        <Card Class="p-4">
+            <Button Color="Color.Success" Class="text-right" Clicked="NewKey">New Key</Button>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell>Created At</TableHeaderCell>
+                        <TableHeaderCell>Name</TableHeaderCell>
+                        <TableHeaderCell>Id</TableHeaderCell>
+                        <TableHeaderCell>Status</TableHeaderCell>
+                        <TableHeaderCell>Action</TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var api in _sortedKeys)
+                    {
+                        <TableRow>
+                            <TableRowCell>
+                                @api.CreatedAt.ToString("d")
+                            </TableRowCell>
+                            <TableRowCell>
+                                @api.Name
+                            </TableRowCell>
+                            <TableRowCell>
+                                ... @api.ApiKey.Substring(api.ApiKey.Length-6)
+                            </TableRowCell>
+                            <TableRowCell>
+                                @if (api.IsActive)
+                                {
+                                    <Badge Color="Color.Success">Active</Badge>
+                                }
+                                else
+                                {
+                                    <Badge Color="Color.Warning">Revoked</Badge>
+                                }
+                            </TableRowCell>
+                            <TableRowCell>
+                                @if(api.IsActive)
+                                {
+                                    <Button Size="Size.ExtraSmall" Color="Color.Danger" Outline Clicked="()=>RevokeKey(api)">
+                                        Revoke Key
+                                    </Button>
+                                }
+                            </TableRowCell>
+                        </TableRow>
+                       
+                    }
+                </TableBody>
+            </Table>
+        </Card>
+    </Column>
+</div>
+
+<Modal @ref="_modalNewKey">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Setup new API Key</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Name your API Key
+                </FieldLabel>
+                <TextEdit Placeholder="'MyApp1'" @bind-Text="_newApiName" />
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="@ConfirmCreate">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="_modalCopyKey">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Keys Created!!</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Text>Rez API Key: </Text>
+            <Badge Color="Color.Info">@_oneTimeCopyCode</Badge>
+            <br/>
+            <Text>Please make sure to copy and securely store this key. Note that it cannot be retrieved once again if lost.</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code{
+
+    private Modal _modalNewKey;
+    private Modal _modalCopyKey;
+
+    private User? User { get; set; }
+
+    private string _newApiName = "";
+    private string _oneTimeCopyCode = "";
+
+    private List<ApiInfo> _sortedKeys  = new List<ApiInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await CurrentSession.GetUser();
+        if(User!= null)
+        {
+            _sortedKeys = User.ApiKeys.OrderByDescending(c => c.CreatedAt).ToList();
+        }
+    }
+
+    private void HideModal()
+    {
+        _modalCopyKey.Hide();
+    }
+
+
+    private Task ShowCopyModal()
+    {
+        return _modalCopyKey.Show();
+    }
+
+    private Task NewKey()
+    {
+        return _modalNewKey.Show();
+    }
+
+    private async Task ConfirmCreate()
+    {
+        if(User == null)
+        {
+            return;
+        }
+
+        var api = await User.CreateNewRezApi(_newApiName);
+        _oneTimeCopyCode = api.ApiKey;
+        await _modalNewKey.Hide();
+        await ShowCopyModal();
+    }
+
+    private async Task RevokeKey(ApiInfo api)
+    {
+        if(User == null)
+        {
+            return;
+        }
+
+        await User.RevokeKey(api);
+        await InvokeAsync(StateHasChanged);
+    }
+
+}
