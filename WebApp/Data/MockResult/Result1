@@ -1,0 +1,135 @@
+{
+  "IsReceiptVisible": true,
+  "Receipts": [
+    {
+      "Items": [
+        {
+          "Name": "GREEN TEA (ICE)",
+          "PricePerItem": 2.00,
+          "Quantity": 2,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "OMAKASE SASHIMI",
+          "PricePerItem": 588.00,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "GREEN TEA (HOT)",
+          "PricePerItem": 4.00,
+          "Quantity": 4,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "INARI SUSHI",
+          "PricePerItem": 6.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "KANI STICK",
+          "PricePerItem": 4.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "TAMAGO NIGIRI",
+          "PricePerItem": 9.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "KANI STICK MAKI",
+          "PricePerItem": 4.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "CRISPY SALMON SKIN",
+          "PricePerItem": 15.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "NATTO",
+          "PricePerItem": 7.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "OKONOMIYAKI",
+          "PricePerItem": 18.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "TAMAGO YAKI",
+          "PricePerItem": 9.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "WARAKUYA PIZZA",
+          "PricePerItem": 18.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "YAKI GYOZA",
+          "PricePerItem": 15.90,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "KATSU CURRY",
+          "PricePerItem": 159.00,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        },
+        {
+          "Name": "UME SAKE (720ML)",
+          "PricePerItem": 159.00,
+          "Quantity": 1,
+          "TaxInclusive": true,
+          "Confidence": 1.0
+        }
+      ],
+      "ShopName": "VIP",
+      "ShopAddress": "",
+      "ReceiptId": "106401",
+      "DateTime": "2020-08-16T12:10:20",
+      "NameOnReceipt": "",
+      "OperatorName": "",
+      "ReturnPeriod": 0,
+      "TotalTax": 51.89,
+      "TotalServiceCharge": 51.89,
+      "TotalDiscount": 0.0,
+      "TotalPriceWithoutTax": 864.90,
+      "TotalPrice": 1003.30,
+      "Category": "Food & Groceries",
+      "OtherValues": {
+        "PAX NO": "5",
+        "Cashier": "C002"
+      }
+    }
+  ],
+  "Remarks": [
+    "OperatorName is not clearly visible.",
+    "ShopAddress is not provided in the visible part of the receipt."
+  ]
+}
