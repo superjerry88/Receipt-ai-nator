@@ -27,7 +27,6 @@
                     <TableRow>
                         <TableHeaderCell>Created At</TableHeaderCell>
                         <TableHeaderCell>Name</TableHeaderCell>
-                        <TableHeaderCell>Id</TableHeaderCell>
                         <TableHeaderCell>Status</TableHeaderCell>
                         <TableHeaderCell>Action</TableHeaderCell>
                     </TableRow>
@@ -43,9 +42,6 @@
                                 @api.Name
                             </TableRowCell>
                             <TableRowCell>
-                                ... @api.ApiKey.Substring(api.ApiKey.Length-6)
-                            </TableRowCell>
-                            <TableRowCell>
                                 @if (api.IsActive)
                                 {
                                     <Badge Color="Color.Success">Active</Badge>
@@ -59,7 +55,7 @@
                                 @if(api.IsActive)
                                 {
                                     <Button Size="Size.ExtraSmall" Color="Color.Danger" Outline Clicked="()=>RevokeKey(api)">
-                                        Revoke Key
+                                        Revoke
                                     </Button>
                                 }
                             </TableRowCell>
