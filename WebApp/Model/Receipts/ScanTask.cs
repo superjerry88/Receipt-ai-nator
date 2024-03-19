@@ -52,6 +52,10 @@ public class ScanTask
             TimeTaken = sw.Elapsed;
             OnError?.Invoke(this, e);
         }
+        if (Result?.TokenConsumed > 0)
+        {
+            await RezApi.Users.ConsumeToken(Image.UserId, Result.TokenConsumed);
+        }
         await RezApi.DbManager.ScanTask.AddOrUpdateTask(this);
     }
 }

@@ -32,7 +32,7 @@ public class GptReceiptClient(string apiKey) : IJob
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine(e.Message);
             return false;
         }
     }
@@ -70,7 +70,9 @@ public class GptReceiptClient(string apiKey) : IJob
         await RezApi.DbManager.GptUsage.AddUsage(completionResult);
         var filename = "Res" + DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6] + ".json";
         await File.WriteAllTextAsync(Path.Combine(RezApi.Files.ResponseFolderPath, filename), json);
-        return JsonConvert.DeserializeObject<ScanResult>(json)!;
+        var scanResult = JsonConvert.DeserializeObject<ScanResult>(json)!;
+        scanResult.TokenConsumed = completionResult.Usage.TotalTokens;
+        return scanResult;
     }
 
     private string GetPrompt(string file)
