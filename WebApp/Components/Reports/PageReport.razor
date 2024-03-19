@@ -24,9 +24,11 @@ else
         <h1>Completed: @ScanTask.IsCompleted</h1>
         <h1>Error: @ScanTask.IsError</h1>
         <h1>TimeTaken : @ScanTask.TimeTaken.TotalMilliseconds ms</h1>
+        
 
         @if (ScanTask.Result != null)
         {
+            <h1>Token consumed: @ScanTask.Result.TokenConsumed</h1>
             <p>Total Receipt in image: @ScanTask.Result.Receipts.Count</p>
             <p>---</p>
             @foreach (var receipt in ScanTask.Result.Receipts)
