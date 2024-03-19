@@ -25,7 +25,7 @@ public class ScanTask
 
     [BsonIgnore]
     [JsonIgnore]
-    public EventHandler<ScanResult> OnComplete { get; set; }
+    public EventHandler<ScanTask> OnComplete { get; set; }
 
     [BsonIgnore]
     [JsonIgnore]
@@ -43,7 +43,7 @@ public class ScanTask
             Result = await Job.ExtractImage(image.LocalFilePath);
             IsCompleted = true;
             TimeTaken = sw.Elapsed;
-            OnComplete?.Invoke(this, Result);
+            OnComplete?.Invoke(this, this);
         }
         catch (Exception e)
         {

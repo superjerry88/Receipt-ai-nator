@@ -8,7 +8,7 @@
         <BreadcrumbLink To="/reports">Reports</BreadcrumbLink>
     </BreadcrumbItem>
     <BreadcrumbItem Active>
-        <BreadcrumbLink To="#">TaskId</BreadcrumbLink>
+        <BreadcrumbLink To="#">@TaskId</BreadcrumbLink>
     </BreadcrumbItem>
 </Breadcrumb>
 
@@ -74,14 +74,18 @@ else
     private void OnError(object? sender, Exception e)
     {
         Console.WriteLine("ON ERROR");
-        InvokeAsync(StateHasChanged);
-        StateHasChanged();
     }
 
-    private void OnComplete(object? sender, ScanResult e)
+    private void OnComplete(object? sender, ScanTask task)
     {
         Console.WriteLine("ON COMPLETE");
-        InvokeAsync(StateHasChanged);
+        ScanTask = task; 
+        UpdateJson();
+    }
+
+    private void UpdateJson()
+    {
+        Json = JsonConvert.SerializeObject(ScanTask, Formatting.Indented);
         StateHasChanged();
     }
 
