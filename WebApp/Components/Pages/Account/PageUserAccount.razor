@@ -1,0 +1,106 @@
+﻿@page "/account"
+@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+
+<div class="max-w-4xl">
+    <Column ColumnSize="ColumnSize.Is6.OnTablet">
+        <Card Margin="Margin.Is4.FromBottom">
+            <CardBody>
+                <CardTitle Size="4">Account Info</CardTitle>
+                <CardText>
+                    Update account information
+                </CardText>
+                <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="UpdateAccount">
+                     Update Account
+                 </Button>
+             </CardBody>
+         </Card>
+     </Column>
+
+     <Column ColumnSize="ColumnSize.Is6.OnTablet">
+         <Card Margin="Margin.Is4.FromBottom">
+             <CardBody>
+                 <CardTitle Size="3">Unlimited Scan</CardTitle>
+                 <CardText>
+                     Setup your Open-AI API key to enable unlimited scan.
+                 </CardText>
+                 <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="SetupUnlimitedScan">
+                     Setup
+                 </Button>
+             </CardBody>
+         </Card>
+     </Column>
+
+     <Column ColumnSize="ColumnSize.Is6.OnTablet">
+         <Card Margin="Margin.Is4.FromBottom">
+             <CardBody>
+                 <CardTitle Size="4">REST API</CardTitle>
+                 <CardText>
+                     Want to use Rezeipt's API for development? Get a free API-key here.
+                 </CardText>
+                 <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="SetupRestApi">
+                     Setup
+                 </Button>
+             </CardBody>
+         </Card>
+     </Column>
+
+
+     <Column ColumnSize="ColumnSize.Is6.OnTablet">
+         <Card Margin="Margin.Is4.FromBottom">
+             <CardBody>
+                 <CardTitle Size="4">Security</CardTitle>
+                 <CardText>
+                     Password management
+                 </CardText>
+                 <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="UpdatePassword">
+                     Update Password
+                 </Button>
+             </CardBody>
+         </Card>
+     </Column>
+
+     <Column ColumnSize="ColumnSize.Is6.OnTablet">
+         <Card Margin="Margin.Is4.FromBottom">
+             <CardBody>
+                 <CardTitle Size="4">Others</CardTitle>
+                 <Button Color="Color.Danger" Block Class="flex items-center justify-center" Clicked="Logout">
+                     Logout
+                 </Button>
+             </CardBody>
+         </Card>
+     </Column>
+
+</div>
+
+
+@code {
+
+    private async void Logout()
+    {
+        await CurrentSession.ClearSession();
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private async void UpdateAccount()
+    {
+        NavigationManager.NavigateTo("/account/info");
+    }
+
+    private void SetupUnlimitedScan()
+    {
+        NavigationManager.NavigateTo("/account/openaikey");
+    }
+
+    private void SetupRestApi()
+    {
+        NavigationManager.NavigateTo("/account/developer");
+    }
+
+    private void UpdatePassword()
+    {
+        NavigationManager.NavigateTo("/account/password");
+    }
+
+
+}
