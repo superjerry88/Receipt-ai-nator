@@ -14,7 +14,7 @@ public class CurrentSession(CookieService cookieService)
         if (User == null)
         {
             var cookie = await cookieService.GetSession();
-            var userId = RezApi.JwtHelper.Validate(cookie);
+            var userId = RezApi.Jwt.Validate(cookie);
 
             //check cookie
             if (userId != null)

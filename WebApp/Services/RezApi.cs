@@ -8,7 +8,8 @@ namespace WebApp.Services
         public static FileService Files { get; set; } = new FileService();
         public static DbManager DbManager { get; set; } = new DbManager();
         public static JobService Jobs { get; set; } = new JobService();
-        public static JwtHelper JwtHelper { get; set; } = new JwtHelper();
+        public static JwtHelper Jwt { get; set; } = new JwtHelper();
+        public static AesHelper Aes { get; set; } = new AesHelper();
 
         internal static void Setup()
         {
