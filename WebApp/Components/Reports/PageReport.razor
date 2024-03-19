@@ -1,0 +1,98 @@
+﻿@page "/Reports/{TaskId}"
+@using Blazorise.Extensions
+@using Newtonsoft.Json
+@implements IDisposable
+
+<Breadcrumb>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/reports">Reports</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Active>
+        <BreadcrumbLink To="#">TaskId</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+@if (ScanTask == null || TaskId.IsNullOrEmpty())
+{
+    <h1>No Job Found</h1>
+    <Button>Go Back</Button>
+}
+else
+{
+    @if(ScanTask.IsCompleted)
+    {
+        <h1>Completed: @ScanTask.IsCompleted</h1>
+        <h1>Error: @ScanTask.IsError</h1>
+        <h1>TimeTaken : @ScanTask.TimeTaken.TotalMilliseconds ms</h1>
+
+        @if (ScanTask.Result != null)
+        {
+            <p>Total Receipt in image: @ScanTask.Result.Receipts.Count</p>
+            <p>---</p>
+            @foreach (var receipt in ScanTask.Result.Receipts)
+            {
+                <p>Amount: @receipt.TotalPrice</p>
+            }
+        }
+        <pre>@Json</pre>
+        
+    }
+    else
+    {
+        <div class="flex flex-col justify-center items-center">
+            <img src="https://walfiegif.files.wordpress.com/2023/07/out-transparent-40.gif" alt="Loading" style="width:100px;">
+            <div>
+                <Paragraph TextColor="TextColor.White">
+                    Your Receipt is processing...
+                </Paragraph>
+            </div>
+        </div>
+       
+       
+    }
+    
+}
+
+@code {
+    [Parameter] public string TaskId { get; set; } = "";
+
+    private ScanTask? ScanTask { get; set; }
+    private string Json { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ScanTask = RezApi.Jobs.GetJob(TaskId);
+        if (ScanTask != null)
+        {
+            ScanTask.OnComplete += OnComplete;
+            ScanTask.OnError += OnError;;
+        }
+
+        Json = JsonConvert.SerializeObject(ScanTask, Formatting.Indented);
+    }
+
+    private void OnError(object? sender, Exception e)
+    {
+        Console.WriteLine("ON ERROR");
+        InvokeAsync(StateHasChanged);
+        StateHasChanged();
+    }
+
+    private void OnComplete(object? sender, ScanResult e)
+    {
+        Console.WriteLine("ON COMPLETE");
+        InvokeAsync(StateHasChanged);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (ScanTask != null)
+        {
+            ScanTask.OnComplete -= OnComplete;
+            ScanTask.OnError -= OnError;
+            Console.WriteLine($"Disposed event for {TaskId}");
+        }
+    }
+
+}
