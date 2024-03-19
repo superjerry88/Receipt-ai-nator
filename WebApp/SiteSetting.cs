@@ -23,6 +23,7 @@ namespace WebApp
         /// Resetting the JWT Seed will invalidate all the existing tokens
         /// </summary>
         public string JwtSeed { get; set; } = "";
+        public string Secret { get; set; } = "";
 
         public List<string> AdminSignup { get; set; } = new List<string>();
 
