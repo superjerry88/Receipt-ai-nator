@@ -19,21 +19,21 @@ public class UserSignUp
     public async Task<bool> ValidateUsername()
     {
         if(string.IsNullOrEmpty(Username)) return false;
-        var user = await RezApi.DbManager.Get<DbUser>().GetByUsername(Username);
+        var user = await RezApi.DbManager.User.GetByUsername(Username);
         return user == null;
     }
 
     public async Task<bool> ValidateEmail()
     {
         if(string.IsNullOrEmpty(Email)) return false;
-        var user = await RezApi.DbManager.Get<DbUser>().GetByEmail(Email);
+        var user = await RezApi.DbManager.User.GetByEmail(Email);
         return user == null;
     }
 
     public async Task<User> Signup()
     {
         var user = new User(this);
-        await RezApi.DbManager.Get<DbUser>().AddUser(user);
+        await RezApi.DbManager.User.AddUser(user);
         return user;
     }
 }

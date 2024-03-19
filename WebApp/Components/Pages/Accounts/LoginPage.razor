@@ -58,7 +58,7 @@
 
     public async void Login()
     {
-        var user = await RezApi.DbManager.Get<DbUser>().Login(Username,Password);
+        var user = await RezApi.DbManager.User.Login(Username,Password);
         if(user != null)
         {
             //todo: Make session lifetime configurable
