@@ -19,6 +19,24 @@ public class GptReceiptClient(string apiKey) : IJob
         ApiKey = apiKey
     });
 
+    public static async Task<bool> ValidateOpenAiKey(string apiKey)
+    {
+        try
+        {
+            var client = new OpenAIService(new OpenAiOptions()
+            {
+                ApiKey = apiKey
+            });
+            await client.Models.ListModel();
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+    }
+
     public async Task<ScanResult> ExtractImage(string imagePath)
     {
         var imageBytes = await File.ReadAllBytesAsync(imagePath);
