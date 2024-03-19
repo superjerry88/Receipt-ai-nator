@@ -1,12 +1,26 @@
 ﻿@page "/admin"
 @inject CurrentSession CurrentSession
 
-
-<h3>Secret Admin Page</h3>
-
-<Button Clicked="AddCreditToEveryone" Color="Color.Primary">Grants everyone free credit</Button>
+@if(!_isAdmin)
+{
+    <Alert Color="Color.Danger" Visible>
+        <AlertMessage>Unauthorized</AlertMessage>
+        <AlertDescription>You are not authorized to view this page</AlertDescription>
+    </Alert>
+}
+else
+{
+    <h3>Secret Admin Page</h3>
+    <Button Clicked="AddCreditToEveryone" Color="Color.Primary">Grants everyone free credit</Button>
+}
 
 @code {
+    private bool _isAdmin = false;
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await CurrentSession.GetUser();
+        _isAdmin = user?.IsAdmin ?? false;
+    }
 
     private async void AddCreditToEveryone()
     {
