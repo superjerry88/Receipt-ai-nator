@@ -4,48 +4,51 @@
 @using System.Globalization
 
 <div class="max-w-5xl">
-    <Table>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>Status</TableHeaderCell>
-                <TableHeaderCell>Dates</TableHeaderCell>
-                <TableHeaderCell>Action</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            <Virtualize Items="Results" Context="res">
+    <Card>
+        <Table>
+            <TableHeader>
                 <TableRow>
-                    <TableRowCell>
-                        @if (res.IsCompleted)
-                        {
-                            <Badge Color="Color.Success">Done</Badge>
-                        }
-                        else if (res.IsError)
-                        {
-                            <Badge Color="Color.Danger">Error</Badge>
-                        }
-                        else if (res.IsTerminated)
-                        {
-                            <Badge Color="Color.Danger">Terminated</Badge>
-                        }
-                        else
-                        {
-                            <Badge Color="Color.Info">Processing</Badge>
-                        }
-                    </TableRowCell>
-                    <TableRowCell>
-
-                        <Tooltip Text="@res.CreatedAt.ToString(CultureInfo.InvariantCulture)">
-                            @GetRelativeTimeString(res.CreatedAt)
-                        </Tooltip>
-                    </TableRowCell>
-                    <TableRowCell>
-                        <Button Clicked="() => GoToReport(res.Id)" Color="Color.Primary">View</Button>
-                    </TableRowCell>
+                    <TableHeaderCell>Status</TableHeaderCell>
+                    <TableHeaderCell>Dates</TableHeaderCell>
+                    <TableHeaderCell>Action</TableHeaderCell>
                 </TableRow>
-            </Virtualize>
-        </TableBody>
-    </Table>
+            </TableHeader>
+            <TableBody>
+                <Virtualize Items="Results" Context="res">
+                    <TableRow>
+                        <TableRowCell>
+                            @if (res.IsCompleted)
+                            {
+                                <Badge Color="Color.Success">Done</Badge>
+                            }
+                            else if (res.IsError)
+                            {
+                                <Badge Color="Color.Danger">Error</Badge>
+                            }
+                            else if (res.IsTerminated)
+                            {
+                                <Badge Color="Color.Danger">Terminated</Badge>
+                            }
+                            else
+                            {
+                                <Badge Color="Color.Info">Processing</Badge>
+                            }
+                        </TableRowCell>
+                        <TableRowCell>
+
+                            <Tooltip Text="@res.CreatedAt.ToString(CultureInfo.InvariantCulture)">
+                                @GetRelativeTimeString(res.CreatedAt)
+                            </Tooltip>
+                        </TableRowCell>
+                        <TableRowCell>
+                            <Button Clicked="() => GoToReport(res.Id)" Color="Color.Primary">View</Button>
+                        </TableRowCell>
+                    </TableRow>
+                </Virtualize>
+            </TableBody>
+        </Table>
+    </Card>
+    
 </div>
 
 
