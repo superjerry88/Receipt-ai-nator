@@ -1,4 +1,5 @@
 ﻿@page "/account"
+@using Microsoft.AspNetCore.Localization
 @inject CurrentSession CurrentSession
 @inject NavigationManager NavigationManager
 
@@ -20,13 +21,34 @@
      <Column ColumnSize="ColumnSize.Is6.OnTablet">
          <Card Margin="Margin.Is4.FromBottom">
              <CardBody>
-                 <CardTitle Size="3">Unlimited Scan</CardTitle>
-                 <CardText>
-                     Setup your Open-AI API key to enable unlimited scan.
-                 </CardText>
-                 <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="SetupUnlimitedScan">
-                     Setup
-                 </Button>
+                 <CardTitle Size="3">Account Token</CardTitle>
+                 <div class="pb-3">
+                     <CardText>
+                         Free Tokens balance:
+                         <Progress>
+                             <ProgressBar Color="Color.Success" Value="user?.FreeTokenBalance" Max="50000"/>
+                         </Progress>
+                     </CardText>
+                 </div>
+
+                 <div class="pb-3">
+                     <CardText>
+                         Configure your OpenAI API key to unlock unlimited scanning capabilities
+                     </CardText>
+                     <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="SetupUnlimitedScan">
+                         Setup
+                     </Button>
+                 </div>
+
+                 <div class="pt-3">
+                     <CardText>
+                         Upgrade your account to unlock more features and increase your balance.
+                     </CardText>
+                     <Button Color="Color.Primary" Disabled Block Class="flex items-center justify-center" Clicked="SetupUnlimitedScan">
+                         Upgrade (Coming Soon)
+                     </Button>
+                 </div>
+                 
              </CardBody>
          </Card>
      </Column>
@@ -75,6 +97,13 @@
 
 
 @code {
+
+    private User? user { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await CurrentSession.GetUser();
+    }
 
     private async void Logout()
     {
