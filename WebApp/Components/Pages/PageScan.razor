@@ -1,7 +1,7 @@
 ﻿@page "/PageScan"
-<!-- This single line costed 2 hours of googling and forum diving -->
-<!-- Todo: raise an issue to update their outdated ass doc  -->
-@rendermode InteractiveServer
+
+@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
 
 @if (_copyStatus is { IsSuccess: false })
 {
@@ -38,11 +38,15 @@
 
     private async Task HandleImageCapture(InputFileChangeEventArgs e)
     {
+        var user = await CurrentSession.GetUser();
         var imageFiles = e.GetMultipleFiles(1);
         if (imageFiles.Count > 0)
         {
             var imageFile = imageFiles[0];
-            _imageInfo = new ImageInfo(imageFile);
+            _imageInfo = new ImageInfo(imageFile)
+            {
+                    UserId = user?.Id ?? "",
+            };
             _copyStatus = await _imageInfo.CopyToLocalPath(imageFile);
             _processStatus =  _imageInfo.ProcessImage();
 
@@ -72,9 +76,12 @@
                 return;
             }
 
-            var client = RezApi.AiManager.GetClient();
-            await client.Try(_imageInfo.LocalFilePath);
-            Console.WriteLine("Done");
+
+            var scanTask = await RezApi.Jobs.GetTestClient();
+            scanTask.DoJob(_imageInfo);
+            NavigationManager.NavigateTo($"/Reports/{scanTask.Id}");
+            Console.WriteLine($"Client Done. Status: {scanTask.IsCompleted}. Time Taken: {scanTask.TimeTaken.TotalMilliseconds} ms");
+            Console.WriteLine(scanTask.IsCompleted);
         }
         catch (Exception e)
         {
