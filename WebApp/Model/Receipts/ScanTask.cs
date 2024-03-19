@@ -19,16 +19,20 @@ public class ScanTask
     public TimeSpan TimeTaken { get; set; }
     public ImageInfo Image { get; set; }
 
+    //welcome to code horror... Bson for mongodb, Json for newtonsoft, System.Text.Json for swagger...
     [BsonIgnore]
     [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
     public IJob Job { get; set; } = new TestClient();
 
     [BsonIgnore]
     [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
     public EventHandler<ScanTask> OnComplete { get; set; }
 
     [BsonIgnore]
     [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
     public EventHandler<Exception> OnError { get; set; }
 
     public async Task DoJob(ImageInfo image)
@@ -52,7 +56,7 @@ public class ScanTask
             TimeTaken = sw.Elapsed;
             OnError?.Invoke(this, e);
         }
-        if (Result?.TokenConsumed > 0)
+        if (Result is { TokenConsumed: > 0, UsingSiteToken: true })
         {
             await RezApi.Users.ConsumeToken(Image.UserId, Result.TokenConsumed);
         }
