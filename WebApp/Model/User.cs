@@ -17,6 +17,8 @@ namespace WebApp.Model
         public DateTime LastLogin { get; set; }
         public DateTime RegisterDatetime { get; set; }
         public bool IsAdmin { get; set; }
+        public bool HasOpenAiKey => !string.IsNullOrEmpty(EncryptedOpenAiKey);
+        public string EncryptedOpenAiKey { get; set; }
 
         public User(UserSignUp signUp)
         {
@@ -50,6 +52,27 @@ namespace WebApp.Model
         public bool CheckPassword(string password)
         {
             return GetHash(password, Salt) == PasswordHash;
+        }
+    }
+
+    public class ApiInfo{
+        public string Id { get; set; } = Guid.NewGuid().ToString("N");
+        public DateTime CreatedAt { get; set; }
+        public string ApiKey { get; set; } = "";
+        public bool IsActive { get; set; }
+        public string UserId { get; set; } = "";
+
+        public ApiInfo()
+        {
+            
+        }
+
+        public ApiInfo(User user)
+        {
+            ApiKey = $"DEMOKEY_{DateTime.Now.Ticks}_{Guid.NewGuid():N}";
+            CreatedAt = DateTime.Now;
+            IsActive = true;
+            UserId = user.Id;
         }
     }
 }
