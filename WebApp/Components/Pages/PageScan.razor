@@ -27,6 +27,21 @@
 @if (_imageInfo != null && _imageInfo.IsImage)
 {
     <img src="@_imageInfo.UrlPath" alt="Preview" style="max-width: 100%; max-height: 800px;" />
+    @if (RezApi.Settings.UseMock)
+    {
+        <Alert Color="Color.Success" Visible>
+            <AlertMessage>MOCK MODE </AlertMessage>
+            <AlertDescription>You are using Mock, dummy data will be presented</AlertDescription>
+        </Alert>
+    }
+    else
+    {
+        <Alert Color="Color.Danger" Visible>
+            <AlertMessage>Warning</AlertMessage>
+            <AlertDescription>YOU ARE NOT USING MOCK</AlertDescription>
+        </Alert>
+    }
+    
     <button @onclick="Cancel">Cancel</button>
     <button @onclick="Submit">Submit</button>
 }
@@ -77,8 +92,19 @@
             }
 
 
-            var scanTask = await RezApi.Jobs.GetTestClient();
-            scanTask.DoJob(_imageInfo);
+            ScanTask scanTask;
+            @if (RezApi.Settings.UseMock)
+            {
+                scanTask = await RezApi.Jobs.GetTestClient();
+                scanTask.DoJob(_imageInfo);
+            }
+            else
+            {
+                Console.WriteLine("[WARNING] YOU ARE NOT USING MOCK [WARNING]");
+                scanTask = await RezApi.Jobs.GetGptClient();
+                scanTask.DoJob(_imageInfo);
+            }
+            
             NavigationManager.NavigateTo($"/Reports/{scanTask.Id}");
             Console.WriteLine($"Client Done. Status: {scanTask.IsCompleted}. Time Taken: {scanTask.TimeTaken.TotalMilliseconds} ms");
             Console.WriteLine(scanTask.IsCompleted);

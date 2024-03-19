@@ -60,16 +60,15 @@ public class GptReceiptClient(string apiKey) : IJob
             }
         );
 
+        var json = "";
         if (completionResult.Successful)
         {
+            json = completionResult.Choices.First().Message.Content;
             Console.WriteLine($"[USAGE] {completionResult.Usage.TotalTokens} Tokens");
-            Console.WriteLine(completionResult.Choices.First().Message.Content);
+            Console.WriteLine(json);
         }
-
         await RezApi.DbManager.GptUsage.AddUsage(completionResult);
-
-        var json = JsonConvert.SerializeObject(completionResult,Formatting.Indented);
-        var filename = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6] + ".json";
+        var filename = "Res" + DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6] + ".json";
         await File.WriteAllTextAsync(Path.Combine(RezApi.Files.ResponseFolderPath, filename), json);
         return JsonConvert.DeserializeObject<ScanResult>(json)!;
     }
