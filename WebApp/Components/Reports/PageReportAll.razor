@@ -13,23 +13,22 @@
             </TableRow>
         </TableHeader>
         <TableBody>
-            @foreach (var res in Results)
-            {
+            <Virtualize Items="Results" Context="res">
                 <TableRow>
                     <TableRowCell>
                         @if (res.IsCompleted)
                         {
                             <Badge Color="Color.Success">Done</Badge>
                         }
-                        else if(res. IsError)
+                        else if (res.IsError)
                         {
                             <Badge Color="Color.Danger">Error</Badge>
                         }
-                        else if(res. IsTerminated)
+                        else if (res.IsTerminated)
                         {
                             <Badge Color="Color.Danger">Terminated</Badge>
                         }
-                        else 
+                        else
                         {
                             <Badge Color="Color.Info">Processing</Badge>
                         }
@@ -44,8 +43,7 @@
                         <Button Clicked="() => GoToReport(res.Id)" Color="Color.Primary">View</Button>
                     </TableRowCell>
                 </TableRow>
-            }
-        
+            </Virtualize>
         </TableBody>
     </Table>
 </div>
