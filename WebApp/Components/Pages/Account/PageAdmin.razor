@@ -1,0 +1,22 @@
+﻿@page "/admin"
+@inject CurrentSession CurrentSession
+
+
+<h3>Secret Admin Page</h3>
+
+<Button Clicked="AddCreditToEveryone" Color="Color.Primary">Grants everyone free credit</Button>
+
+@code {
+
+    private async void AddCreditToEveryone()
+    {
+        var brokeUser = RezApi.Users.AllUsers.Where(c => c.FreeTokenBalance == 0).ToList();
+        foreach (var user in brokeUser)
+        {
+            user.FreeTokenBalance = 50000;
+        }
+        await RezApi.DbManager.User.AddOrUpdateUserMany(brokeUser);
+        Console.WriteLine("Done");
+    }
+
+}
