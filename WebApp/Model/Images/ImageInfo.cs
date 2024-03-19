@@ -26,6 +26,13 @@ public class ImageInfo
     public bool IsDigitized { get; set; } = false;
     public bool ContainsReceipt { get; set; } = false;
 
+    public string UserId { get; set; }
+
+    public ImageInfo()
+    {
+        
+    }
+
     public ImageInfo(IBrowserFile imageFile)
     {
         Id = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6];
@@ -69,6 +76,7 @@ public class ImageInfo
             Console.WriteLine(e);
             return ImageInfoStatus.Error(e.Message);
         }
+
     }
 
     private void TryExtractGps()
