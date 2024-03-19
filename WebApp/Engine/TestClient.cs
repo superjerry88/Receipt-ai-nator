@@ -9,10 +9,8 @@ public class TestClient : IJob
 {
     public async Task<ScanResult> ExtractImage(string imagePath)
     {
-        Console.WriteLine("TestClient is running");
         await Task.Delay(8000);
         var json = GetMockResult("Result1");
-        Console.WriteLine("TestClient done extracting mock");
         return JsonConvert.DeserializeObject<ScanResult>(json)!;
     }
 
