@@ -11,6 +11,8 @@ public class ImageInfo
 {
     [BsonId]
     public string Id { get; set; }
+
+    [System.Text.Json.Serialization.JsonIgnore]
     public string LocalFilePath { get; set; }
     public string UrlPath { get; set; }
     public int Height { get; set; }
@@ -33,6 +35,16 @@ public class ImageInfo
         
     }
 
+    public ImageInfo(IFormFile imageFile)
+    {
+        Id = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6];
+        var fileExtension = Path.GetExtension(imageFile.Name);
+        var fileNameCleanse = Id + fileExtension;
+        LocalFilePath = Path.Combine(RezApi.Files.UnsafeFolderPath, fileNameCleanse);
+        UrlPath = RezApi.Files.UnsafeFolderUrl(fileNameCleanse);
+        FileExtension = Path.GetExtension(LocalFilePath);
+    }
+
     public ImageInfo(IBrowserFile imageFile)
     {
         Id = DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6];
@@ -41,6 +53,22 @@ public class ImageInfo
         LocalFilePath = Path.Combine(RezApi.Files.UnsafeFolderPath, fileNameCleanse);
         UrlPath = RezApi.Files.UnsafeFolderUrl(fileNameCleanse);
         FileExtension = Path.GetExtension(LocalFilePath);
+    }
+
+    public async Task<ImageInfoStatus> CopyToLocalPath(IFormFile imageFile)
+    {
+        try
+        {
+            await using FileStream fs = new(LocalFilePath, FileMode.Create);
+            await imageFile.CopyToAsync(fs);
+            fs.Close();
+            return ImageInfoStatus.Success();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return ImageInfoStatus.Error(e.Message);
+        }
     }
 
     public async Task<ImageInfoStatus> CopyToLocalPath(IBrowserFile imageFile)
