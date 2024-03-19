@@ -1,0 +1,17 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Helo fren</h1>
+
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        var secret = RezApi.Aes.EncryptString("hello");
+        var plain = RezApi.Aes.DecryptString(secret);
+        Console.WriteLine(secret);
+        Console.WriteLine(plain);
+    }
+}
