@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Security.Cryptography;
+using Blazorise.Extensions;
 using WebApp.Services;
 
 namespace WebApp.Model
 {
+    [BsonIgnoreExtraElements]
     public class User
     {
         [BsonId]
@@ -19,6 +21,7 @@ namespace WebApp.Model
         public bool IsAdmin { get; set; }
         public bool HasOpenAiKey => !string.IsNullOrEmpty(EncryptedOpenAiKey);
         public string EncryptedOpenAiKey { get; set; }
+        public int FreeTokenBalance { get; set; } = 50000;
 
         public User(UserSignUp signUp)
         {
@@ -52,6 +55,11 @@ namespace WebApp.Model
         public bool CheckPassword(string password)
         {
             return GetHash(password, Salt) == PasswordHash;
+        }
+
+        public string GetApiKey()
+        {
+            return EncryptedOpenAiKey.IsNullOrEmpty() ? "" : RezApi.Aes.DecryptString(EncryptedOpenAiKey);
         }
     }
 
