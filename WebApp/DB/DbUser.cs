@@ -24,6 +24,16 @@ public class DbUser : DbBase
         await Collection.ReplaceOneAsync(x => x.Id == user.Id, user, new ReplaceOptions { IsUpsert = true });
     }
 
+    public async Task AddOrUpdateUserMany(List<User> users)
+    {
+        var bulk = new List<WriteModel<User>>();
+        foreach (var user in users)
+        {
+            bulk.Add(new ReplaceOneModel<User>(Builders<User>.Filter.Eq(x => x.Id, user.Id), user) { IsUpsert = true });
+        }
+        await Collection.BulkWriteAsync(bulk);
+    }
+
     public async Task<User?> Login(string username, string password)
     {
         var user = await Collection.AsQueryable().Where(c => c.Username.Equals(username, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
