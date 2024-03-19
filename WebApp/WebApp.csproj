@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Prompt\OCRV001" />
+    <None Remove="Data\MockResult\Result1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\MockResult\Result1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Prompt\OCRV001" />
   </ItemGroup>
 
   <ItemGroup>
