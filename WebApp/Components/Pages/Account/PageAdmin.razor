@@ -12,6 +12,7 @@ else
 {
     <h3>Secret Admin Page</h3>
     <Button Clicked="AddCreditToEveryone" Color="Color.Primary">Grants everyone free credit</Button>
+    <Button Clicked="FixApiKey" Color="Color.Primary">Fix empty ApiKey issue</Button>
 }
 
 @code {
@@ -29,7 +30,26 @@ else
         {
             user.FreeTokenBalance = 50000;
         }
-        await RezApi.DbManager.User.AddOrUpdateUserMany(brokeUser);
+        if(brokeUser .Count > 0)
+        {
+            await RezApi.DbManager.User.AddOrUpdateUserMany(brokeUser);
+        }
+        Console.WriteLine("Done");
+    }
+
+    private async void FixApiKey()
+    {
+        var brokeUser = RezApi.Users.AllUsers.Where(c => c.ApiKeys == null).ToList();
+        foreach (var user in brokeUser)
+        {
+            user.ApiKeys = new List<ApiInfo>();
+        }
+
+        if (brokeUser.Count > 0)
+        {
+            await RezApi.DbManager.User.AddOrUpdateUserMany(brokeUser);
+        }
+
         Console.WriteLine("Done");
     }
 
