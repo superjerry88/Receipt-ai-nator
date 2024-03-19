@@ -78,7 +78,7 @@
         if(ValidEmail && ValidUsername && User.MatchingPassword())
         {
             var actualUser = await User.Signup();
-            await CookieService.SetCookie(RezApi.JwtHelper.Generate(actualUser));
+            await CookieService.SetCookie(RezApi.Jwt.Generate(actualUser));
             NavigationManager.NavigateTo("/welcome");
             Console.WriteLine("Signup success");
         }

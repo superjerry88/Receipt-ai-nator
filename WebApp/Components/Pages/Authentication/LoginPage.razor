@@ -62,7 +62,7 @@
         if(user != null)
         {
             //todo: Make session lifetime configurable
-            await CookieService.SetCookie(RezApi.JwtHelper.Generate(user));
+            await CookieService.SetCookie(RezApi.Jwt.Generate(user));
             NavigationManager.NavigateTo("/welcome");
         }
         else
