@@ -10,6 +10,7 @@ namespace WebApp.Services
         public static JobService Jobs { get; set; } = new JobService();
         public static JwtHelper Jwt { get; set; } = new JwtHelper();
         public static AesHelper Aes { get; set; } = new AesHelper();
+        public static UserService Users { get; set; } = new UserService();
 
         internal static void Setup()
         {
@@ -19,6 +20,7 @@ namespace WebApp.Services
             //probably not the best way to do this, but time is essence
             //todo improve runtime caching
             Jobs.Initialize().GetAwaiter().GetResult();
+            Users.Initialize().GetAwaiter().GetResult();
         }
     }
 }

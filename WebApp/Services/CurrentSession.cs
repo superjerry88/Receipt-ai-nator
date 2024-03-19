@@ -19,7 +19,7 @@ public class CurrentSession(CookieService cookieService)
             //check cookie
             if (userId != null)
             {
-                User = await RezApi.DbManager.User.GetUser(userId);
+                User = RezApi.Users.GetUser(userId);
                 if (User != null)
                 {
                     User.LastLogin = DateTime.Now;
@@ -30,8 +30,7 @@ public class CurrentSession(CookieService cookieService)
             }
         }
 
-        if (User == null) return null;
-        return await RezApi.DbManager.User.GetUser(User.Id);
+        return User == null ? null : RezApi.Users.GetUser(User.Id);
     }
 
     public async Task<bool> IsAdmin()
