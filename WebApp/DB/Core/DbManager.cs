@@ -8,6 +8,11 @@ namespace WebApp.DB.Core
         private bool Initialized { get; set; }
         private ConcurrentDictionary<Type, DbBase> DbInstance { get; set; } = new();
 
+        public DbUser User => Get<DbUser>();
+        public DbGptUsage GptUsage => Get<DbGptUsage>();
+        public DbScanTask ScanTask => Get<DbScanTask>();
+
+
         public void InitializeDb()
         {
             if (Initialized) return;
@@ -18,7 +23,7 @@ namespace WebApp.DB.Core
             }
         }
 
-        public T Get<T>() where T : DbBase
+        private T Get<T>() where T : DbBase
         {
             if (Connector == null)
             {
