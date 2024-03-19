@@ -2,6 +2,7 @@ using Blazorise;
 using Blazorise.Icons.FontAwesome;
 using Blazorise.Tailwind;
 using Microsoft.Extensions.FileProviders;
+using System.Reflection;
 using WebApp.Components;
 using WebApp.Services;
 
@@ -18,6 +19,8 @@ builder.Services
     .AddFontAwesomeIcons();
 
 builder.Services
+    .AddControllers();
+
 builder.Services
     .AddSwaggerGen(c =>
     {
@@ -28,6 +31,7 @@ builder.Services
         //... and tell Swagger to use those XML comments.
         c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
     });
+
 builder.Services.AddScoped<CookieService>();
 builder.Services.AddScoped<CurrentSession>();
 
@@ -59,6 +63,7 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/files")
 });
 
+app.MapControllers();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
