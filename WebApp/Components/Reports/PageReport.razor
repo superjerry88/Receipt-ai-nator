@@ -29,6 +29,7 @@ else
         @if (ScanTask.Result != null)
         {
             <h1>Token consumed: @ScanTask.Result.TokenConsumed</h1>
+            <h1>Using Free Token: @ScanTask.Result.UsingSiteToken</h1>
             <p>Total Receipt in image: @ScanTask.Result.Receipts.Count</p>
             <p>---</p>
             @foreach (var receipt in ScanTask.Result.Receipts)
@@ -59,7 +60,7 @@ else
     [Parameter] public string TaskId { get; set; } = "";
 
     private ScanTask? ScanTask { get; set; }
-    private string Json { get; set; }
+    private string Json { get; set; } = "";
 
     protected override void OnInitialized()
     {
@@ -76,6 +77,7 @@ else
     private void OnError(object? sender, Exception e)
     {
         Console.WriteLine("ON ERROR");
+        Console.WriteLine(e);
     }
 
     private void OnComplete(object? sender, ScanTask task)
