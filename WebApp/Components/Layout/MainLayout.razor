@@ -22,13 +22,19 @@
         </header>
 
         <!-- Main content area where @Body will be rendered -->
-        <main class="flex-grow pt-4 pb-4 mx-auto" style="max-width: 1200px;">
+        <main class="lg:w-3/5 md:pr-16 lg:pr-0 pr-0 flex-grow pt-4 pb-4 mx-auto flex flex-col items-center">
             @Body
         </main>
+
+        <!-- Quick and dirty shortcut to prevent footer from clipping -->
+        <div class="md:hidden z-10" style="height: 85px; background: red">
+            YOU SHOULD NOT SEE THIS
+        </div>
 
         <!-- Icons for mobile view -->
         <nav class="bg-gray-900 text-gray-400 border-t-2 border-stone-500 p-2 flex justify-around md:hidden fixed inset-x-0 bottom-0 z-10">
             <!-- Use your actual icons here -->
+
             <TabMenu></TabMenu>
         </nav>
     </div>
