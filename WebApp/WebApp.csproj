@@ -1,37 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>a03ce7d4-5c1e-4ca1-b2f5-3889691d5aaf</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>a03ce7d4-5c1e-4ca1-b2f5-3889691d5aaf</UserSecretsId>
 
-  <ItemGroup>
-    <None Remove="Data\MockResult\Result1" />
-  </ItemGroup>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Data\MockResult\Result1" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Data\MockResult\Result1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Data\Prompt\OCRV001" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Data\MockResult\Result1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Betalgo.OpenAI" Version="7.4.6" />
-    <PackageReference Include="Blazorise" Version="1.5.0-preview1" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.5.0-preview1" />
-    <PackageReference Include="Blazorise.Tailwind" Version="1.5.0-preview1" />
-    <PackageReference Include="JWT" Version="10.1.1" />
-    <PackageReference Include="MongoDB.Bson" Version="2.24.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.24.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.2.24128.3" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Data\Prompt\OCRV001" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Betalgo.OpenAI" Version="7.4.6" />
+		<PackageReference Include="Blazorise" Version="1.5.0-preview1" />
+		<PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.5.0-preview1" />
+		<PackageReference Include="Blazorise.Tailwind" Version="1.5.0-preview1" />
+		<PackageReference Include="JWT" Version="10.1.1" />
+		<PackageReference Include="MongoDB.Bson" Version="2.24.0" />
+		<PackageReference Include="MongoDB.Driver" Version="2.24.0" />
+		<PackageReference Include="MongoDB.Driver.Core" Version="2.24.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.2.24128.3" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
+		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+	</ItemGroup>
 
 </Project>
