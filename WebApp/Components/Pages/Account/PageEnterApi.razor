@@ -1,12 +1,185 @@
 ﻿@page "/account/openaikey"
+@using Blazorise.Extensions
+@inject CurrentSession CurrentSession
 
-<Breadcrumb>
-    <BreadcrumbItem>
-        <BreadcrumbLink To="/account">Account</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbItem Active>
-        <BreadcrumbLink To="#">Open-AI Setup</BreadcrumbLink>
-    </BreadcrumbItem>
-</Breadcrumb>
+<div class="w-full">
+    <Breadcrumb>
+        <BreadcrumbItem>
+            <BreadcrumbLink To="/account">Account</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem Active>
+            <BreadcrumbLink To="#">Open-AI Setup</BreadcrumbLink>
+        </BreadcrumbItem>
+    </Breadcrumb>
+    
+    <Card Class="mt-3 pt-4 pb-4 ps-8">
+        <Text TextWeight="TextWeight.Bold">
+            Current API Key Status:
+            @switch (Status)
+            {
+                case StatusType.Empty:
+                    <Badge Color="Color.Primary">Empty Key</Badge>
+                    break;
+                case StatusType.Valid:
+                    <Badge Color="Color.Success">Valid</Badge>
+                    break;
+                case StatusType.Invalid:
+                    <Badge Color="Color.Danger">Invalid</Badge>
+                    break;
+            }
+        </Text>
+        
+        @if(Status == StatusType.Valid)
+        {
+            <br/>
+            <br/>
+            <Button Color="Color.Danger" Size="Size.ExtraSmall" Clicked="RemoveKey">Remove key from Account</Button>
+        }
+        
+    </Card>
 
-<ComingSoon></ComingSoon>
+    <Card Class="mt-3 pt-4 ps-8">
+        <Field Horizontal>
+            <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">
+                <Text TextWeight="TextWeight.Bold"> OpenAI API Key </Text>
+            </FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <TextEdit Role="TextRole.Password" @bind-text="ApiKey">
+
+                        </TextEdit>
+                    </Addon>
+                    <Addon AddonType="AddonType.End">
+                        <Button Color="Color.Primary" Clicked="@(SetApi)">Set new key</Button>
+                    </Addon>
+                </Addons>
+                <FieldHelp>
+                    Enter an OpenAI Key in order to have unlimited receipt scan through the site and the REST API Gateway. Get your OpenAi API Key at 
+                    <Link To="https://platform.openai.com/api-keys">
+                        OpenAI
+                    </Link>
+                </FieldHelp>
+            </FieldBody>
+        </Field>
+        <br/>
+        <br/>
+        
+        <Field Horizontal>
+            <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">
+                <Text TextWeight="TextWeight.Bold">Usage Info </Text>
+            </FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+                Rezeipt leverages GPT-4 Turbo for image contextualization, with the average token consumption per receipt being approximately 2000 tokens. For detailed token pricing, please refer to:
+                <Link To="https://openai.com/pricing">
+                    OpenAI Pricing Calculator
+                </Link>
+            </FieldBody>
+        </Field>
+
+        
+         
+    </Card>
+
+    <br/>
+    <Alert Color="Color.Danger" Visible="_addFail">
+        <AlertMessage>
+            Invalid API Key. Please try again with another key.
+        </AlertMessage>
+    </Alert>
+    
+    <Alert Color="Color.Warning" Visible="_addEmpty">
+        <AlertMessage>
+            Field cannot be empty
+        </AlertMessage>
+    </Alert>
+    
+    <Alert Color="Color.Success" Visible="_addSuccess">
+        <AlertMessage>
+            Valid API Key. Key is updated.
+        </AlertMessage>
+    </Alert>
+    
+    <Alert Color="Color.Success" Visible="_removeSuccess">
+        <AlertMessage>
+            API Key is removed from your account.
+        </AlertMessage>
+    </Alert>
+</div>
+
+
+
+@code
+{
+    private string ApiKey { get; set; } = "";
+    private User? User { get; set; }
+    private StatusType Status { get; set; } = StatusType.Empty;
+
+    private bool _addSuccess = false;
+    private bool _addFail = false;
+    private bool _addEmpty = false;
+    private bool _removeSuccess = false;
+
+    private enum StatusType
+    {
+        Empty,
+        Valid,
+        Invalid
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await CurrentSession.GetUser();
+        Status = await CheckKey(User.GetApiKey());
+    }
+
+    private void ResetStatus()
+    {
+        _addSuccess = false;
+        _addFail = false;
+        _removeSuccess = false;
+        _addEmpty = false;
+    }
+
+    private async void SetApi()
+    {
+        ResetStatus();
+        if (User == null) return;
+
+        if (ApiKey.IsNullOrEmpty())
+        {
+            _addEmpty = true;
+        }
+        else if (await GptReceiptClient.ValidateOpenAiKey(ApiKey))
+        {
+            User.EncryptedOpenAiKey = RezApi.Aes.EncryptString(ApiKey);
+            await RezApi.DbManager.User.AddOrUpdateUser(User);
+            _addSuccess = true;
+        }
+        else
+        {
+            _addFail = true;
+        }
+        Status = await CheckKey(User.GetApiKey());
+        ApiKey = "";
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<StatusType> CheckKey(string key)
+    {
+        if (key.IsNullOrEmpty()) return StatusType.Empty;
+        var success = await GptReceiptClient.ValidateOpenAiKey(key);
+        return success ? StatusType.Valid : StatusType.Invalid;
+    }
+
+    private async Task RemoveKey()
+    {
+        ResetStatus();
+        if (User == null) return;
+        User.EncryptedOpenAiKey = "";
+        await RezApi.DbManager.User.AddOrUpdateUser(User);
+        Status = StatusType.Empty;
+        _removeSuccess = true;
+        await InvokeAsync(StateHasChanged);
+    }
+}
