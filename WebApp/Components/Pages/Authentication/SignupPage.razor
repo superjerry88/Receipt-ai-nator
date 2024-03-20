@@ -5,64 +5,69 @@
 @inject CookieService CookieService
 @page "/signup"
 
-<div>
-    @if(!ValidUsername)
-    {
-        <Alert Color="Color.Danger" Visible>
-            <AlertMessage>Error!</AlertMessage>
-            <AlertDescription>Username already taken</AlertDescription>
-        </Alert>
-    }
-    
-    @if(!ValidEmail)
-    {
-        <Alert Color="Color.Danger" Visible>
-            <AlertMessage>Error!</AlertMessage>
-            <AlertDescription>Email already taken</AlertDescription>
-        </Alert>
-    }
+@* Logo *@
+<div class="pt-[5%]">
+    <div class="bg-slate-700 h-20 rounded-xl flex flex-col justify-center">
+        <p class="text-white m-auto">Logo</p>
+    </div>
 </div>
 
-<div>
-    <Field>
-        <FieldLabel>Email</FieldLabel>
-        <TextEdit Role="TextRole.Email" @bind-Text="User.Email">
-        </TextEdit>
-    </Field>
+@* "Card" for Input Fields *@
+<div class="pt-[5%]">
+    <div class="bg-slate-700 rounded-lg border-gray-600 p-3 shadow-md border">
 
-    <Field>
-        <FieldLabel>Username</FieldLabel>
-        <TextEdit @bind-Text="User.Username">
-        </TextEdit>
-    </Field>
+        @* Invisible Alert *@
+        @if (FailedSignup)
+        {
+            <Alert Color="Color.Danger" Visible>
+                <AlertMessage>Error!</AlertMessage>
+                <AlertDescription>Signup Failed. Your username and email may have been already taken (or are empty)!</AlertDescription>
+            </Alert>
+        }
 
-    <Field>
-        <FieldLabel>Password</FieldLabel>
-        <TextEdit Role="TextRole.Password" @bind-Text="User.Password">
-        </TextEdit>
-    </Field>
+        @* Input Fields *@
+        <Field Class="mb-5">
+            <FieldLabel Class="mb-1">Email</FieldLabel>
+            <TextEdit Role="TextRole.Email" @bind-Text="User.Email">
+            </TextEdit>
+        </Field>
 
-    <Field>
-        <FieldLabel >Repeat Password</FieldLabel>
-        <TextEdit Role="TextRole.Password" Text="@User.PasswordConfirm" TextChanged="CheckSame">
-            <FieldHelp>
-                <Text TextColor="@PasswordSameColor">@PasswordSameText</Text>
-            </FieldHelp>
-        </TextEdit>
-    </Field>
+        <Field Class="mb-5">
+            <FieldLabel Class="mb-1">Username</FieldLabel>
+            <TextEdit @bind-Text="User.Username">
+            </TextEdit>
+        </Field>
 
-    <Button Clicked="Signup">
-        Sign Up
-    </Button>
+        <Field Class="mb-5">
+            <FieldLabel Class="mb-1">Password</FieldLabel>
+            <TextEdit Role="TextRole.Password" @bind-Text="User.Password" Class="@ValidityClass">
+            </TextEdit>
+        </Field>
 
-    <Button Clicked="BackToLogin">
-        Back to Login
-    </Button>
+        <Field>
+            <FieldLabel Class="mb-1">Repeat Password</FieldLabel>
+            <TextEdit Role="TextRole.Password" Text="@User.PasswordConfirm" TextChanged="CheckSame" Class="@ValidityClass">
+                <FieldHelp>
+                    <Text TextColor="@PasswordSameColor">@PasswordSameText</Text>
+                </FieldHelp>
+            </TextEdit>
+        </Field>
+
+        <div class="grid grid-cols-2 justify-items-center">
+            <Button Clicked="Signup">
+                Sign Up
+            </Button>
+
+            <Button Clicked="BackToLogin">
+                Back to Login
+            </Button>
+        </div>
+
+    </div>
 </div>
 
 
-
-@code {
+    @code {
     private UserSignUp User { get; set; }  = new UserSignUp();
 
     private string? PasswordSameText { get; set; }
@@ -70,6 +75,10 @@
 
     private bool ValidUsername { get; set; } = true;
     private bool ValidEmail { get; set; } = true;
+
+    private bool MatchingPassword { get; set; } = true;
+    private bool FailedSignup { get; set; } = false;
+    private string ValidityClass => $"{(!MatchingPassword ? "dark:border-red-500 dark:focus:border-red-700 dark:focus:ring-red-500" : "dark:border-green-500 dark:focus:border-green-700 dark:focus:ring-green-500")}";
 
     private async void Signup()
     {
@@ -84,6 +93,7 @@
         }
         else
         {
+            FailedSignup = true;
             Console.WriteLine("FAILED TO SIGNUP");
             await InvokeAsync(StateHasChanged);
         }
@@ -97,16 +107,16 @@
     private void CheckSame(string password)
     {
         User.PasswordConfirm = password;
-        if(User.MatchingPassword())
+        MatchingPassword = User.MatchingPassword();
+        if(MatchingPassword)
         {
-            PasswordSameText = "Same";
+            PasswordSameText = "Passwords match.";
             PasswordSameColor = TextColor.Success;
         }
         else
         {
-            PasswordSameText = "Password is not same";
+            PasswordSameText = "Passwords do not match!";
             PasswordSameColor = TextColor.Danger;
         }
     }
-
 }
