@@ -16,23 +16,63 @@
 {
 
     <Card Class="p-3">
-        <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+
+        <div class="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-white font-medium">
-                Total Price
+                Receipt ID
             </dt>
             <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-                @Receipt.TotalPrice
+                @Receipt.ReceiptId
             </dd>
         </div>
         
-        <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <div class="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 mb-3">
             <dt class="text-sm font-medium text-white font-medium">
-                Address
+                Date and Time
             </dt>
             <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-                @Receipt.ShopAddress
+                @Receipt.DateTime
             </dd>
         </div>
+
+        <!-- Categories: (1) Items / (2) Shop Details / (3) Totals / (4) Additional details -->
+        @for (var Index = 0; Index < 4; Index++)
+        {
+            var Header = Categories[Index];
+            var CurrentIndex = Index;
+            var State = Toggle[CurrentIndex];
+            var AllData = LoadData(Index);
+
+            <div class="w-[96%] mx-auto bg-slate-800 rounded-md border-2 border-slate-700 mb-5">
+
+                <div class="pl-3 py-1 text-opacity-95 hover:cursor-pointer hover:bg-slate-@(State ? "600" : "700") rounded-sm bg-slate-@(State ? "700" : "800")" 
+                @onclick="() => ExpandContent(CurrentIndex)">
+                    @Header
+                    <span class="float-right pr-3 text-1.5 text-slate-400 font-bold">@(State ? "\u02C4" : "\u02C5")</span>
+                </div>
+
+                @if (Toggle[Index])
+                {
+                    @foreach (var CurrentData in AllData)
+                    {
+                        <div class="my-4 w-[96%] bg-slate-600 rounded-md align-middle hover:cursor-default mx-auto p-3">
+                        @foreach (var Data in CurrentData)
+                        {
+                                <div class="grid grid-cols-3 mb-1">
+                                    <dt class="text-sm font-medium text-white font-medium">
+                                @Data.Item1
+                                    </dt>
+
+                                    <dd class="text-sm text-slate-300 sm:mt-0 sm:col-span-2">
+                                @Data.Item2
+                                    </dd>
+                                </div>
+                        }
+                        </div>
+                    }
+                }
+            </div>
+        }
     </Card>
 }
 else
@@ -53,6 +93,9 @@ else
     private Receipt? Receipt { get; set; }
     private bool IsLoaded { get; set; } = false;
 
+    private bool[] Toggle { get; set; } = { false, false, false, false };
+    private string[] Categories { get; set; } = { "Items", "Shop Details", "Totals", "Additional Details" };
+
     private string ReportPage => "/Reports/" + TaskId;
 
 
@@ -64,5 +107,61 @@ else
             Receipt = ScanTask?.Result?.Receipts.ElementAtOrDefault(index);
         }
         IsLoaded = true;
+    }
+
+    private void ExpandContent(int Index)
+    {
+        Toggle[Index] = !Toggle[Index];
+    }
+
+    private List<List<Tuple<string, string>>> LoadData(int Index)
+    {
+        List<List<Tuple<string, string>>> Result = new List<List<Tuple<string, string>>>();
+
+        switch (Index)
+        {
+            // Items
+            case 0:
+                Result.Add(new List<Tuple<string, string>>());
+                Result[0].Add(new Tuple<string, string>("Total Items", Receipt?.Items.Count.ToString() ?? "Not Available"));
+                int Counter = 1;
+                foreach (var Data in Receipt?.Items)
+                {
+                    Result.Add(new List<Tuple<string, string>>());
+                    Result[Counter].Add(new Tuple<string, string>("Item Name", Data.Name ?? "Not Available"));
+                    Result[Counter].Add(new Tuple<string, string>("Item Description", Data.Description ?? "Not Available"));
+                    Result[Counter].Add(new Tuple<string, string>("Item Category", Data.Category ?? "Not Available"));
+                    Result[Counter].Add(new Tuple<string, string>("Price per Item", Data.PricePerItem.ToString() ?? "Not Available"));
+                    Result[Counter].Add(new Tuple<string, string>("Quantity", Data.Quantity.ToString() ?? "Not Available"));
+                    Result[Counter].Add(new Tuple<string, string>("Total Price", Data.TotalPrice.ToString() ?? "Not Available"));
+                    Counter++;
+                }
+                break;
+
+            // Shop Details
+            case 1:
+                Result.Add(new List<Tuple<string, string>>());
+                Result[0].Add(new Tuple<string, string>("Shop Name", Receipt.ShopName ?? "Not Available"));
+                Result[0].Add(new Tuple<string, string>("Shop Address", Receipt.ShopAddress ?? "Not Available"));
+                break;
+
+            // Totals
+            case 2:
+                Result.Add(new List<Tuple<string, string>>());
+                Result[0].Add(new Tuple<string, string>("Total Price without Tax", Receipt.TotalPriceWithoutTax.ToString() ?? "Not Available"));
+                Result[0].Add(new Tuple<string, string>("Total Tax", Receipt.TotalTax.ToString() ?? "Not Available"));
+                Result[0].Add(new Tuple<string, string>("Total Service Charge", Receipt.TotalServiceCharge.ToString() ?? "Not Available"));
+                Result[0].Add(new Tuple<string, string>("Total Discount", Receipt.TotalDiscount.ToString() ?? "Not Available"));
+                Result[0].Add(new Tuple<string, string>("Total Price", Receipt.TotalPrice.ToString() ?? "Not Available"));
+                break;
+
+            // Additional Details
+            // TODO: Replace with any appropriate details
+            case 3:
+                Result.Add(new List<Tuple<string, string>>());
+                Result[0].Add(new Tuple<string, string>("Temporarily", "Empty"));
+                break;
+        }
+        return Result;
     }
 }
