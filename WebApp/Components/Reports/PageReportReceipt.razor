@@ -1,0 +1,68 @@
+﻿@page "/Reports/{TaskId}/{index}"
+
+<Breadcrumb>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/reports">Reports</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem >
+        <BreadcrumbLink To="@ReportPage">JobTask</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Active>
+        <BreadcrumbLink To="#">Receipt</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+@if (IsLoaded && Receipt != null)
+{
+
+    <Card Class="p-3">
+        <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-white font-medium">
+                Total Price
+            </dt>
+            <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
+                @Receipt.TotalPrice
+            </dd>
+        </div>
+        
+        <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-white font-medium">
+                Address
+            </dt>
+            <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
+                @Receipt.ShopAddress
+            </dd>
+        </div>
+    </Card>
+}
+else
+{
+    <h1>Receipt not found</h1>
+    <Button>Go Back</Button>
+}
+
+@code {
+    [Parameter] 
+    public string TaskId { get; set; } = "";
+
+    [Parameter] 
+    public string Index { get; set; } = "";
+
+    //For loading 
+    private ScanTask? ScanTask { get; set; }
+    private Receipt? Receipt { get; set; }
+    private bool IsLoaded { get; set; } = false;
+
+    private string ReportPage => "/Reports/" + TaskId;
+
+
+    protected override void OnInitialized()
+    {
+        ScanTask = RezApi.Jobs.GetJob(TaskId);
+        if (int.TryParse(Index, out var index))
+        {
+            Receipt = ScanTask?.Result?.Receipts.ElementAtOrDefault(index);
+        }
+        IsLoaded = true;
+    }
+}
