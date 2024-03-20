@@ -1,13 +1,25 @@
-﻿using WebApp.DB;
+﻿using System.ComponentModel.DataAnnotations;
+using WebApp.DB;
 using WebApp.Services;
 
 namespace WebApp.Model;
 
 public class UserSignUp
 {
+    [Required]
+    [EmailAddress(ErrorMessage = "Invalid email.")]
     public string Email { get; set; } = "";
+
+    [Required]
     public string Username { get; set; } = "";
+
+    [Required(ErrorMessage = "Password is required")]
+    [DataType(DataType.Password)]
     public string Password { get; set; } = "";
+
+    [Required(ErrorMessage = "Confirm Password is required")]
+    [DataType(DataType.Password)]
+    [Compare("Password")]
     public string PasswordConfirm { get; set; } = "";
 
     public bool MatchingPassword()
