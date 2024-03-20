@@ -1,0 +1,28 @@
+﻿<div class="w-[96%] mx-auto bg-slate-800 rounded-md border-2 border-slate-700 mb-5">
+
+    <div class="pl-3 py-1 text-opacity-95 hover:cursor-pointer hover:bg-slate-@(IsToggled ? "600" : "700") rounded-sm bg-slate-@(IsToggled ? "700" : "800")" @onclick="Toggled">
+        @Header
+        <span class="float-right pr-3 text-1.5 text-slate-400 font-bold">@(IsToggled ? "\u02C4" : "\u02C5")</span>
+    </div>
+
+    @if (IsToggled)
+    {
+        @ChildContent
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Header { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = null!;
+
+    private bool IsToggled { get; set; } = false;
+
+    private void Toggled()
+    {
+        IsToggled = !IsToggled;
+    }
+    
+}

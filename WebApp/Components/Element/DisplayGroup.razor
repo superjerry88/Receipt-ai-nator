@@ -1,0 +1,8 @@
+﻿<div class="my-4 w-[96%] bg-slate-600 rounded-md align-middle hover:cursor-default mx-auto p-3">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] 
+    public RenderFragment ChildContent { get; set; } = null!;
+}

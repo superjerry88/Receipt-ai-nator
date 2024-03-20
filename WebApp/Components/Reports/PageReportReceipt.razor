@@ -1,4 +1,5 @@
 ﻿@page "/Reports/{TaskId}/{index}"
+@using Blazorise.Extensions
 
 <Breadcrumb>
     <BreadcrumbItem>
@@ -34,6 +35,34 @@
                 @Receipt.DateTime
             </dd>
         </div>
+        
+        @* ITEMS SECTION *@
+        <div>
+            <div>
+                Total Items : @Receipt.Items.Count
+            </div>
+            <div>
+                @foreach (var item in Receipt.Items)
+                {
+                    <div class="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-white font-medium">
+                            Item Name
+                        </dt>
+                        <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
+                            @item.Name
+                        </dd>
+                    </div>
+                }
+                }
+            </div>
+        </div>
+        
+
+        @* SHOP DETAILS SECTION *@
+        <div>
+            <div>ShopName: @Receipt.ShopName</div>
+            <div>ShopName: @FixString(Receipt.ShopName)</div>
+        </div>
 
         <!-- Categories: (1) Items / (2) Shop Details / (3) Totals / (4) Additional details -->
         @for (var Index = 0; Index < 4; Index++)
@@ -58,21 +87,29 @@
                         <div class="my-4 w-[96%] bg-slate-600 rounded-md align-middle hover:cursor-default mx-auto p-3">
                         @foreach (var Data in CurrentData)
                         {
-                                <div class="grid grid-cols-3 mb-1">
-                                    <dt class="text-sm font-medium text-white font-medium">
-                                @Data.Item1
-                                    </dt>
-
-                                    <dd class="text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-                                @Data.Item2
-                                    </dd>
-                                </div>
+                            <DisplayInfo Label="@Data.Item1" Value="@Data.Item2"></DisplayInfo>
                         }
                         </div>
                     }
                 }
             </div>
         }
+        
+        <DisplayCollapse Header="Testing">
+            <DisplayGroup>
+                <DisplayInfo Label="Label 1" Value="Value 1"></DisplayInfo>
+                <DisplayInfo Label="Label 2" Value="Value 2"></DisplayInfo>
+                <DisplayInfo Label="Label 3" Value="Value 3"></DisplayInfo>
+            </DisplayGroup>
+
+            <DisplayGroup>
+                <DisplayInfo Label="Label 1" Value="Value 1"></DisplayInfo>
+                <DisplayInfo Label="Label 2" Value="Value 2"></DisplayInfo>
+                <DisplayInfo Label="Label 3" Value="Value 3"></DisplayInfo>
+            </DisplayGroup>
+        </DisplayCollapse>
+        
+
     </Card>
 }
 else
@@ -163,5 +200,11 @@ else
                 break;
         }
         return Result;
+    }
+
+    public string FixString(object input)
+    {
+        var word = input.ToString();
+        return string.IsNullOrEmpty(word) ? "Not Available" : word;
     }
 }

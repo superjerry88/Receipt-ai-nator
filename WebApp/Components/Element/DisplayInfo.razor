@@ -1,0 +1,17 @@
+﻿<div class="grid grid-cols-3 mb-1">
+    <dt class="text-sm font-medium text-white font-medium">
+        @Label
+    </dt>
+
+    <dd class="text-sm text-slate-300 sm:mt-0 sm:col-span-2">
+        @Value
+    </dd>
+</div>
+
+@code {
+    [Parameter] 
+    public string Label { get; set; } = "";
+
+    [Parameter] 
+    public string Value { get; set; } = "Not Available";
+}
