@@ -2,6 +2,7 @@
 @using Blazorise.Extensions
 @using Newtonsoft.Json
 @implements IDisposable
+@inject NavigationManager NavigationManager
 
 <Breadcrumb>
     <BreadcrumbItem>
@@ -32,9 +33,16 @@ else
             <h1>Using Free Token: @ScanTask.Result.UsingSiteToken</h1>
             <p>Total Receipt in image: @ScanTask.Result.Receipts.Count</p>
             <p>---</p>
-            @foreach (var receipt in ScanTask.Result.Receipts)
+
+            @for (var index = 0; index < ScanTask.Result.Receipts.Count; index++)
             {
-                <p>Amount: @receipt.TotalPrice</p>
+                
+                var currentIndex = index;
+                var receipt = ScanTask.Result.Receipts[currentIndex];
+                <div class="pb-3">
+                    <Button Block Color="Color.Success" Clicked="() => GoToReceipt(currentIndex)"> View Receipt No.@currentIndex [RM @receipt.TotalPrice] </Button>
+                </div>
+                
             }
         }
         <pre>@Json</pre>
@@ -101,6 +109,11 @@ else
             ScanTask.OnError -= OnError;
             Console.WriteLine($"Disposed event for {TaskId}");
         }
+    }
+
+    private void GoToReceipt(int index)
+    {
+        NavigationManager.NavigateTo($"/Reports/{TaskId}/{index}");
     }
 
 }
