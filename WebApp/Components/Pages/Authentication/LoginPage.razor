@@ -4,38 +4,51 @@
 @inject CookieService CookieService
 @inject NavigationManager NavigationManager
 
-<h3>LoginPage</h3>
+@* Possible div for logo? *@
+<div class="pt-[5%]">
+    <div class="bg-slate-700 h-20 rounded-xl flex flex-col justify-center">
+		<p class="text-white m-auto">Logo</p>
+    </div>
+</div>
 
-@* Invisible Alerts *@
-@if(FailedLogin)
-{
-    <Alert Color="Color.Danger" Visible>
-        <AlertMessage>Error!</AlertMessage>
-        <AlertDescription>Incorrect Credentials</AlertDescription>
-    </Alert>
-}
+@* "Card" for Input Fields *@
+<div class="pt-[5%]">
+    <div class="bg-slate-700 rounded-lg border-gray-600 p-3 shadow-md border">
 
-@* Input fields  *@
-<div>
-    <Field>
-        <FieldLabel>Username</FieldLabel>
-        <TextEdit @bind-Text="Username">
-        </TextEdit>
-    </Field>
+        @* Invisible Alert *@
+        @if (FailedLogin)
+        {
+            <Alert Color="Color.Danger" Visible>
+                <AlertMessage>Error!</AlertMessage>
+                <AlertDescription>Incorrect Username or Password.</AlertDescription>
+            </Alert>
+        }
 
-    <Field>
-        <FieldLabel>Password</FieldLabel>
-        <TextEdit Role="TextRole.Password" @bind-Text="Password">
-        </TextEdit>
-    </Field>
+        @* Input Fields *@
+		<Field Class="mb-5">
+			<FieldLabel Class="mb-1">Username</FieldLabel>
+			<TextEdit @bind-Text="Username" Class="@FocusClass" Placeholder="Enter your username...">
+			</TextEdit>
+		</Field>
+
+		<Field>
+			<FieldLabel Class="mb-1">Password</FieldLabel>
+			<TextEdit Role="TextRole.Password" @bind-Text="Password" Class="@FocusClass" Placeholder="Enter your password...">
+			</TextEdit>
+		</Field>
+
+        <div class="grid grid-cols-2 justify-items-center">
+            <Button Clicked="Login">
+                Login
+            </Button>
+
+            <Button Clicked="Signup">
+                Signup
+            </Button>
+        </div>
+    </div>
+
     
-    <Button Clicked="Login">
-        Login
-    </Button>
-    
-    <Button Clicked="Signup">
-        Signup
-    </Button>
 </div>
 
 @code {
@@ -43,6 +56,8 @@
     public string? Password { get; set; }
 
     public bool FailedLogin { get; set; } = false;
+
+    public string FocusClass => $"w-full {(FailedLogin ? "dark:border-red-500 dark:focus:border-red-700 dark:focus:ring-red-500" : "dark:focus:border-blue-600 dark:focus:ring-blue-600")}";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -76,5 +91,4 @@
     {
         NavigationManager.NavigateTo("/signup");
     }
-
 }
