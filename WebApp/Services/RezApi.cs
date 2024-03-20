@@ -11,6 +11,7 @@ namespace WebApp.Services
         public static JwtHelper Jwt { get; set; } = new JwtHelper();
         public static AesHelper Aes { get; set; } = new AesHelper();
         public static UserService Users { get; set; } = new UserService();
+        public static AnalyticService Analytic { get; set; } = new AnalyticService();
 
         internal static void Setup()
         {
