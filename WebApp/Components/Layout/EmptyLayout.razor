@@ -3,15 +3,9 @@
 
 <div class="dark bg-gray-800 min-h-screen flex flex-col  text-gray-200 body-font">
     <!-- Main content area where @Body will be rendered -->
-    <main class="flex-grow pt-4 pb-4 mx-auto" style="max-width: 1200px;">
+    <main class="pt-4 pb-4 mx-auto w-[30%]" style="max-width: 1200px;">
         @Body
     </main>
-
-    <!-- Icons for mobile view -->
-    <nav class="bg-gray-900 text-gray-400 border-t-2 border-stone-500 p-2 flex justify-around md:hidden fixed inset-x-0 bottom-0 z-10">
-        <!-- Use your actual icons here -->
-        <TabMenu></TabMenu>
-    </nav>
 </div>
 
 @* TODO IDK WHY THIS IS TRIGGERING. DISABLED UNTIL FUTURE ME CAN FIGURE OUT WHY *@
