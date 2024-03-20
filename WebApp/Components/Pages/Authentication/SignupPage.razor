@@ -5,69 +5,89 @@
 @inject CookieService CookieService
 @page "/signup"
 
-@* Logo *@
-<div class="pt-[5%]">
-    <div class="bg-slate-700 h-20 rounded-xl flex flex-col justify-center">
-        <p class="text-white m-auto">Logo</p>
-    </div>
-</div>
+<div class="text-gray-400 bg-gray-900 body-font">
+    <div class="container px-5 mx-auto py-10 flex flex-wrap items-center">
 
-@* "Card" for Input Fields *@
-<div class="pt-[5%]">
-    <div class="bg-slate-700 rounded-lg border-gray-600 p-3 shadow-md border">
+        <div class="lg:w-2/4 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+            <img class="max-h-20 mx-auto m-6" src="REZEIPT.png"/>
+            <p class="leading-relaxed ms-4">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+        </div>
 
-        @* Invisible Alert *@
-        @if (FailedSignup)
-        {
-            <Alert Color="Color.Danger" Visible>
-                <AlertMessage>Error!</AlertMessage>
-                <AlertDescription>Signup Failed. Your username and email may have been already taken (or are empty)!</AlertDescription>
-            </Alert>
-        }
+        <div class="lg:w-2/4 md:w-1/2 bg-gray-800 bg-opacity-50 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+            <h2 class="text-white text-lg font-medium title-font mb-5">Sign Up</h2>
 
-        @* Input Fields *@
-        <Field Class="mb-5">
-            <FieldLabel Class="mb-1">Email</FieldLabel>
-            <TextEdit Role="TextRole.Email" @bind-Text="User.Email">
-            </TextEdit>
-        </Field>
+            <Validations Mode="ValidationMode.Auto" Model="User">
 
-        <Field Class="mb-5">
-            <FieldLabel Class="mb-1">Username</FieldLabel>
-            <TextEdit @bind-Text="User.Username">
-            </TextEdit>
-        </Field>
 
-        <Field Class="mb-5">
-            <FieldLabel Class="mb-1">Password</FieldLabel>
-            <TextEdit Role="TextRole.Password" @bind-Text="User.Password" Class="@ValidityClass">
-            </TextEdit>
-        </Field>
+                <div class="relative mb-4">
+                    <label class="leading-7 text-sm text-gray-400">Email</label>
+                    <Validation >
+                        <FieldBody>
+                            <TextEdit Role="TextRole.Email" @bind-Text="User.Email" Class="@FieldClass">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
 
-        <Field>
-            <FieldLabel Class="mb-1">Repeat Password</FieldLabel>
-            <TextEdit Role="TextRole.Password" Text="@User.PasswordConfirm" TextChanged="CheckSame" Class="@ValidityClass">
-                <FieldHelp>
-                    <Text TextColor="@PasswordSameColor">@PasswordSameText</Text>
-                </FieldHelp>
-            </TextEdit>
-        </Field>
+                        </FieldBody>
+                    </Validation>
+                </div>
 
-        <div class="grid grid-cols-2 justify-items-center">
-            <Button Clicked="Signup">
-                Sign Up
-            </Button>
+                <div class="relative mb-4">
+                    <label class="leading-7 text-sm text-gray-400">Username</label>
+                    <Validation>
+                        <FieldBody>
+                            <TextEdit Role="TextRole.Email" @bind-Text="User.Username" Class="@FieldClass">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
 
-            <Button Clicked="BackToLogin">
-                Back to Login
-            </Button>
+                        </FieldBody>
+                    </Validation>
+                </div>
+
+                <div class="relative mb-4">
+                    <label class="leading-7 text-sm text-gray-400">Password</label>
+                    <Validation>
+                        <FieldBody>
+                            <TextEdit Role="TextRole.Password" @bind-Text="User.Password" Class="@FieldClass">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
+
+                        </FieldBody>
+                    </Validation>
+                </div>
+
+                <div class="relative mb-4">
+                    <label class="leading-7 text-sm text-gray-400">Repeat Password</label>
+                    <Validation>
+                        <FieldBody>
+                            <TextEdit Role="TextRole.Password" @bind-Text="User.PasswordConfirm" Class="@FieldClass">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
+
+                        </FieldBody>
+                    </Validation>
+                </div>
+            </Validations>
+
+            <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" @onclick="Signup">Sign up</button>
+            <p class="text-xs mt-3">Login <Link href="/login">Here</Link></p>
         </div>
 
     </div>
 </div>
 
 
-    @code {
+
+@code {
     private UserSignUp User { get; set; }  = new UserSignUp();
 
     private string? PasswordSameText { get; set; }
@@ -79,6 +99,8 @@
     private bool MatchingPassword { get; set; } = true;
     private bool FailedSignup { get; set; } = false;
     private string ValidityClass => $"{(!MatchingPassword ? "dark:border-red-500 dark:focus:border-red-700 dark:focus:ring-red-500" : "dark:border-green-500 dark:focus:border-green-700 dark:focus:ring-green-500")}";
+
+    private string FieldClass => "w-full bg-gray-600 bg-opacity-20 focus:bg-transparent focus:ring-2 focus:ring-indigo-900 rounded border border-gray-600 focus:border-indigo-500 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out";
 
     private async void Signup()
     {
