@@ -33,6 +33,7 @@ public class UserSignUp
     public async Task<User> Signup()
     {
         var user = new User(this);
+        RezApi.Users.AllUsers.Add(user);
         await RezApi.DbManager.User.AddUser(user);
         return user;
     }
