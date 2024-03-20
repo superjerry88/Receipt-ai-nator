@@ -95,17 +95,30 @@
             </div>
         }
         
+        <DisplayCollapse Header="Shop Details">
+            <DisplayGroup>
+                <DisplayInfo Label="Shop Name"> @Receipt.ShopName </DisplayInfo>
+                <DisplayInfo Label="Shop Address"> @Receipt.ShopAddress </DisplayInfo>
+            </DisplayGroup>
+        </DisplayCollapse>
+
         <DisplayCollapse Header="Testing">
             <DisplayGroup>
-                <DisplayInfo Label="Label 1" Value="Value 1"></DisplayInfo>
-                <DisplayInfo Label="Label 2" Value="Value 2"></DisplayInfo>
-                <DisplayInfo Label="Label 3" Value="Value 3"></DisplayInfo>
+                <DisplayInfo Label="Label 1"> Value 1 </DisplayInfo>
+                <DisplayInfo Label="Label 2"> Value 2 </DisplayInfo>
+                <DisplayInfo Label="Label 3"> Value 3 </DisplayInfo>
             </DisplayGroup>
 
             <DisplayGroup>
-                <DisplayInfo Label="Label 1" Value="Value 1"></DisplayInfo>
-                <DisplayInfo Label="Label 2" Value="Value 2"></DisplayInfo>
-                <DisplayInfo Label="Label 3" Value="Value 3"></DisplayInfo>
+                <DisplayInfo Label="Label 1">
+                    <Badge Color="Color.Danger"> Value 4</Badge>
+                </DisplayInfo>
+                <DisplayInfo Label="Label 2">
+                    <Badge Color="Color.Success"> Value 5</Badge>
+                </DisplayInfo>
+                <DisplayInfo Label="Label 3">
+                    <Badge Color="Color.Info"> Value 6</Badge>
+                </DisplayInfo>
             </DisplayGroup>
         </DisplayCollapse>
         

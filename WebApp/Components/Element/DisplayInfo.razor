@@ -4,14 +4,15 @@
     </dt>
 
     <dd class="text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-        @Value
+        @ChildContent
     </dd>
 </div>
 
 @code {
-    [Parameter] 
-    public string Label { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
 
-    [Parameter] 
-    public string Value { get; set; } = "Not Available";
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = null!;
+
+
 }
