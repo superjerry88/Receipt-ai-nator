@@ -85,7 +85,7 @@ public class GptReceiptClient : IJob
         return scanResult;
     }
 
-    private string GetPrompt(string file)
+    public static string GetPrompt(string file)
     {
         var resourceName = "Data.Prompt." + file;
         var resourcePath = resourceName;

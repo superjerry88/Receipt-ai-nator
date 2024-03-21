@@ -38,6 +38,7 @@ builder.Services
 
 builder.Services.AddScoped<CookieService>();
 builder.Services.AddScoped<CurrentSession>();
+builder.Services.AddScoped<ChatService>();
 
 // Add custom SiteSetting service
 builder.Configuration.AddSiteBinding();
