@@ -77,7 +77,7 @@
             var currentUser = await CurrentSession.GetUser();
             if(currentUser != null)
             {
-                NavigationManager.NavigateTo("/welcome");
+                NavigationManager.NavigateTo("/");
             }
         }
     }
@@ -89,7 +89,7 @@
         {
             //todo: Make session lifetime configurable
             await CookieService.SetCookie(RezApi.Jwt.Generate(user));
-            NavigationManager.NavigateTo("/welcome");
+            NavigationManager.NavigateTo("/");
         }
         else
         {
