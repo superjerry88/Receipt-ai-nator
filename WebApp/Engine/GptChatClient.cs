@@ -64,15 +64,13 @@ public class GptChatClient
             .Where(scan => scan is { Receipts.Count: > 0 })
             .SelectMany(scan => scan?.Receipts)
             .OrderByDescending(receipt => receipt.DateTime)
-            .Take(6)
+            .Take(10)
             .Select(x => new SimpleReceipt(x))
             .ToList();
 
         UserHistoryJson = JsonConvert.SerializeObject(receipts);
-        Console.WriteLine(UserHistoryJson);
 
         var system = GptReceiptClient.GetPrompt("CHAT001") + UserHistoryJson;
-        Console.WriteLine(system);
         Prompt = new ChatCompletionCreateRequest
         {
             Messages = new List<ChatMessage>
@@ -107,6 +105,7 @@ public class GptChatClient
         {
             await RezApi.Users.ConsumeToken(UserId, gptResponse.Usage.TotalTokens);
         }
+        Console.WriteLine($"Used: {gptResponse.Usage.TotalTokens}");
 
         //Set response as complete
         SetTyping(false);
