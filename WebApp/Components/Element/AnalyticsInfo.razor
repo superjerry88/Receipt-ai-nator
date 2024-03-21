@@ -1,5 +1,17 @@
 ﻿<div class="mb-2">
-	<div class="text-sm">@Header</div>
+	@if (TaskId == null)
+	{
+		<div class="text-sm mb-1">@Header</div>
+	}
+	else
+	{
+		<a href="reports/@TaskId">
+			<div class="text-sm bg-blue-700 w-max rounded-lg px-2 mb-1">
+				@Header
+				<Icon Name="IconName.AngleRight"></Icon>
+			</div>
+		</a>
+	}
 	<Progress Color="Color.Success" Value="@((int)(Percentage*100))"/> 
 	<div class="text-xs text-right">@ChildContent</div>
 </div>
@@ -10,6 +22,9 @@
 
 	[Parameter]
 	public double Percentage { get; set; } = 0;
+
+	[Parameter]
+	public string TaskId { get; set; } = null;
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; } = null!;
