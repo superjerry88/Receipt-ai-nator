@@ -14,7 +14,11 @@ builder.Services.AddRazorComponents()
 
 // Add Blazorise
 builder.Services
-    .AddBlazorise()
+    .AddBlazorise(options =>
+    {
+        options.Debounce = true;
+        options.DebounceInterval = 300;
+    })
     .AddTailwindProviders()
     .AddFontAwesomeIcons();
 
