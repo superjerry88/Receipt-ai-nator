@@ -74,7 +74,12 @@ public class GptReceiptClient : IJob
             Console.WriteLine($"[USAGE] {completionResult.Usage.TotalTokens} Tokens");
             Console.WriteLine(json);
         }
-        await RezApi.DbManager.GptUsage.AddUsage(completionResult);
+
+        if (completionResult.Id != null)
+        {
+            await RezApi.DbManager.GptUsage.AddUsage(completionResult);
+        }
+        
         var filename = "Res" + DateTime.Now.Ticks + "_" + Guid.NewGuid().ToString("N")[..6] + ".json";
         await File.WriteAllTextAsync(Path.Combine(RezApi.Files.ResponseFolderPath, filename), json);
         var scanResult = JsonConvert.DeserializeObject<ScanResult>(json)!;
