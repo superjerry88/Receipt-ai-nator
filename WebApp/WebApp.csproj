@@ -11,6 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="Data\Prompt\CHAT001" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Update="appsettings.json">
 			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
 		</Content>
