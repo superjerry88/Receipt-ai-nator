@@ -9,7 +9,7 @@ public class AnalyticService
     {
         var jobsOfUser = RezApi.Jobs.GetJobsByUser(user);
         var jobs = jobsOfUser.Where(x => x.IsCompleted).ToList();
-        List<ScanResult> results = jobs.Where(x => x.Result!=null).Select(x => x.Result).ToList()!;
+        List<ScanResult> results = jobs.Where(x => x.Result != null).Select(x => x.Result).ToList()!;
         var receipts = results.Where(x => x.Receipts.Any()).SelectMany(x => x.Receipts).ToList();
 
         var analytic = new Analytic()
