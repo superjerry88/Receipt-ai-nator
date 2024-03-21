@@ -47,6 +47,10 @@
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Components\Pages\Admin\" />
+	</ItemGroup>
+
 	
 
 </Project>
