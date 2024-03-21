@@ -17,107 +17,55 @@
 {
 
     <Card Class="p-3">
+        @* Receipt Details *@
+        <DisplayGroup>
+            <DisplayInfo Label="Receipt ID">@Receipt.ReceiptId.FixString()</DisplayInfo>
+            <DisplayInfo Label="Date and Time">@Receipt.DateTime.FixString()</DisplayInfo>
+            <DisplayInfo Label="!Separator!"></DisplayInfo>
+            <DisplayInfo Label="Shop Name">@Receipt.ShopName.FixString()</DisplayInfo>
+            <DisplayInfo Label="Total Items">@Receipt.Items.Count</DisplayInfo>
+            <DisplayInfo Label="Total Amount">
+                <Badge Color="Color.Success">@Receipt.TotalPrice.FixString(true)</Badge>
+            </DisplayInfo>
+        </DisplayGroup>
 
-        <div class="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-white font-medium">
-                Receipt ID
-            </dt>
-            <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-                @Receipt.ReceiptId
-            </dd>
-        </div>
-        
-        <div class="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 mb-3">
-            <dt class="text-sm font-medium text-white font-medium">
-                Date and Time
-            </dt>
-            <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-                @Receipt.DateTime
-            </dd>
-        </div>
-        
-        @* ITEMS SECTION *@
-        <div>
-            <div>
-                Total Items : @Receipt.Items.Count
-            </div>
-            <div>
-                @foreach (var item in Receipt.Items)
-                {
-                    <div class="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-white font-medium">
-                            Item Name
-                        </dt>
-                        <dd class="mt-1 text-sm text-slate-300 sm:mt-0 sm:col-span-2">
-                            @item.Name
-                        </dd>
-                    </div>
-                }
-                }
-            </div>
-        </div>
-        
-
-        @* SHOP DETAILS SECTION *@
-        <div>
-            <div>ShopName: @Receipt.ShopName</div>
-            <div>ShopName: @FixString(Receipt.ShopName)</div>
-        </div>
-
-        <!-- Categories: (1) Items / (2) Shop Details / (3) Totals / (4) Additional details -->
-        @for (var Index = 0; Index < 4; Index++)
-        {
-            var Header = Categories[Index];
-            var CurrentIndex = Index;
-            var State = Toggle[CurrentIndex];
-            var AllData = LoadData(Index);
-
-            <div class="w-[96%] mx-auto bg-slate-800 rounded-md border-2 border-slate-700 mb-5">
-
-                <div class="pl-3 py-1 text-opacity-95 hover:cursor-pointer hover:bg-slate-@(State ? "600" : "700") rounded-sm bg-slate-@(State ? "700" : "800")" 
-                @onclick="() => ExpandContent(CurrentIndex)">
-                    @Header
-                    <span class="float-right pr-3 text-1.5 text-slate-400 font-bold">@(State ? "\u02C4" : "\u02C5")</span>
-                </div>
-
-                @if (Toggle[Index])
-                {
-                    @foreach (var CurrentData in AllData)
-                    {
-                        <div class="my-4 w-[96%] bg-slate-600 rounded-md align-middle hover:cursor-default mx-auto p-3">
-                        @foreach (var Data in CurrentData)
-                        {
-                                <DisplayInfo Label="@Data.Item1">@Data.Item2</DisplayInfo>
-                        }
-                        </div>
-                    }
-                }
-            </div>
-        }
+        @* Items *@
+        <DisplayCollapse Header="Items">
+            @foreach (var Item in Receipt?.Items)
+            {
+                <DisplayGroup>
+                    <DisplayInfo Label="Item Name">@Item.Name.FixString()</DisplayInfo>
+                    <DisplayInfo Label="Item Description"><FormattedString></FormattedString>
+                        @Item.Description.FixString()</DisplayInfo>
+                    <DisplayInfo Label="Item Category">@Item.Category.FixString()</DisplayInfo>
+                    <DisplayInfo Label="Price per Item">@Item.PricePerItem.FixString(true)</DisplayInfo>
+                    <DisplayInfo Label="Quantity">@Item.Quantity.FixString()</DisplayInfo>
+                    <DisplayInfo Label="Total Price">
+                        <Badge Color="Color.Success">@Item.TotalPrice.FixString(true)</Badge>
+                    </DisplayInfo>
+                </DisplayGroup>
+            }
+        </DisplayCollapse>
         
         <DisplayCollapse Header="Shop Details">
             <DisplayGroup>
-                <DisplayInfo Label="Shop Name"> @Receipt.ShopName </DisplayInfo>
-                <DisplayInfo Label="Shop Address"> @Receipt.ShopAddress </DisplayInfo>
+                <DisplayInfo Label="Shop Name"> @Receipt.ShopName.FixString() </DisplayInfo>
+                <DisplayInfo Label="Shop Address"> @Receipt.ShopAddress.FixString() </DisplayInfo>
             </DisplayGroup>
         </DisplayCollapse>
 
-        <DisplayCollapse Header="Testing">
+        <DisplayCollapse Header="Totals">
             <DisplayGroup>
-                <DisplayInfo Label="Label 1"> Value 1 </DisplayInfo>
-                <DisplayInfo Label="Label 2"> Value 2 </DisplayInfo>
-                <DisplayInfo Label="Label 3"> Value 3 </DisplayInfo>
-            </DisplayGroup>
-
-            <DisplayGroup>
-                <DisplayInfo Label="Label 1">
-                    <Badge Color="Color.Danger"> Value 4</Badge>
+                <DisplayInfo Label="Total Price without Tax">@Receipt.TotalPriceWithoutTax.FixString(true)
                 </DisplayInfo>
-                <DisplayInfo Label="Label 2">
-                    <Badge Color="Color.Success"> Value 5</Badge>
+                <DisplayInfo Label="Total Tax">@Receipt.TotalTax.FixString(true)
                 </DisplayInfo>
-                <DisplayInfo Label="Label 3">
-                    <Badge Color="Color.Info"> Value 6</Badge>
+                <DisplayInfo Label="Total Service Charge">@Receipt.TotalServiceCharge.FixString(true)
+                </DisplayInfo>
+                <DisplayInfo Label="Total Discount">@Receipt.TotalDiscount.FixString(true)
+                </DisplayInfo>
+                <DisplayInfo Label="Total Price">
+                    <Badge Color="Color.Success">@Receipt.TotalPrice.FixString(true)</Badge>
                 </DisplayInfo>
             </DisplayGroup>
         </DisplayCollapse>
@@ -157,67 +105,5 @@ else
             Receipt = ScanTask?.Result?.Receipts.ElementAtOrDefault(index);
         }
         IsLoaded = true;
-    }
-
-    private void ExpandContent(int Index)
-    {
-        Toggle[Index] = !Toggle[Index];
-    }
-
-    private List<List<Tuple<string, string>>> LoadData(int Index)
-    {
-        List<List<Tuple<string, string>>> Result = new List<List<Tuple<string, string>>>();
-
-        switch (Index)
-        {
-            // Items
-            case 0:
-                Result.Add(new List<Tuple<string, string>>());
-                Result[0].Add(new Tuple<string, string>("Total Items", Receipt?.Items.Count.ToString() ?? "Not Available"));
-                int Counter = 1;
-                foreach (var Data in Receipt?.Items)
-                {
-                    Result.Add(new List<Tuple<string, string>>());
-                    Result[Counter].Add(new Tuple<string, string>("Item Name", Data.Name ?? "Not Available"));
-                    Result[Counter].Add(new Tuple<string, string>("Item Description", Data.Description ?? "Not Available"));
-                    Result[Counter].Add(new Tuple<string, string>("Item Category", Data.Category ?? "Not Available"));
-                    Result[Counter].Add(new Tuple<string, string>("Price per Item", Data.PricePerItem.ToString() ?? "Not Available"));
-                    Result[Counter].Add(new Tuple<string, string>("Quantity", Data.Quantity.ToString() ?? "Not Available"));
-                    Result[Counter].Add(new Tuple<string, string>("Total Price", Data.TotalPrice.ToString() ?? "Not Available"));
-                    Counter++;
-                }
-                break;
-
-            // Shop Details
-            case 1:
-                Result.Add(new List<Tuple<string, string>>());
-                Result[0].Add(new Tuple<string, string>("Shop Name", Receipt.ShopName ?? "Not Available"));
-                Result[0].Add(new Tuple<string, string>("Shop Address", Receipt.ShopAddress ?? "Not Available"));
-                break;
-
-            // Totals
-            case 2:
-                Result.Add(new List<Tuple<string, string>>());
-                Result[0].Add(new Tuple<string, string>("Total Price without Tax", Receipt.TotalPriceWithoutTax.ToString() ?? "Not Available"));
-                Result[0].Add(new Tuple<string, string>("Total Tax", Receipt.TotalTax.ToString() ?? "Not Available"));
-                Result[0].Add(new Tuple<string, string>("Total Service Charge", Receipt.TotalServiceCharge.ToString() ?? "Not Available"));
-                Result[0].Add(new Tuple<string, string>("Total Discount", Receipt.TotalDiscount.ToString() ?? "Not Available"));
-                Result[0].Add(new Tuple<string, string>("Total Price", Receipt.TotalPrice.ToString() ?? "Not Available"));
-                break;
-
-            // Additional Details
-            // TODO: Replace with any appropriate details
-            case 3:
-                Result.Add(new List<Tuple<string, string>>());
-                Result[0].Add(new Tuple<string, string>("Temporarily", "Empty"));
-                break;
-        }
-        return Result;
-    }
-
-    public string FixString(object input)
-    {
-        var word = input.ToString();
-        return string.IsNullOrEmpty(word) ? "Not Available" : word;
     }
 }
