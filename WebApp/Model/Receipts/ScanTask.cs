@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using WebApp.Engine;
@@ -65,5 +66,21 @@ public class ScanTask
             await RezApi.Users.ConsumeToken(Image.UserId, Result.TokenConsumed);
         }
         await RezApi.DbManager.ScanTask.AddOrUpdateTask(this);
+    }
+
+    public List<Receipt> GetReceiptsWithReference()
+    {
+        if (Result == null)
+        {
+            return [];
+        }
+        var receipts = Result.Receipts;
+        for (var i = 0; i < receipts.Count; i++)
+        {
+            var receipt = receipts[i];
+            receipt.TaskId = Id;
+            receipt.ReceiptIndex = i;
+        }
+        return receipts;
     }
 }

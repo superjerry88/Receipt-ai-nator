@@ -7,15 +7,13 @@ public class AnalyticService
 {
     public Task<Analytic> GetAnalytics(User user)
     {
-        var jobsOfUser = RezApi.Jobs.GetJobsByUser(user);
-        var jobs = jobsOfUser.Where(x => x.IsCompleted).ToList();
-        List<ScanResult> results = jobs.Where(x => x.Result != null).Select(x => x.Result).ToList()!;
-        var receipts = results.Where(x => x.Receipts.Any()).SelectMany(x => x.Receipts).ToList();
+        var receipts = RezApi.Jobs.GetReceiptByUser(user);
 
+        Console.WriteLine($"RE: {receipts.FirstOrDefault()?.TaskId} | {receipts.FirstOrDefault()?.ReceiptIndex}");
         var analytic = new Analytic()
         {
             UserId = user.Id,
-            TotalScans = jobsOfUser.Count,
+            TotalScans = receipts.Select(c=>c.TaskId).Distinct().Count(),
 
             TotalReceiptsAllTime = receipts.Count,
             TotalReceiptsThisMonth = receipts.Count(x => x.DateTime.Month == DateTime.Now.Month),

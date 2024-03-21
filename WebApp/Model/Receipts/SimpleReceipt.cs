@@ -11,6 +11,8 @@ public class SimpleReceipt
         TotalPrice = (int)receipt.TotalPrice;
         Category = receipt.Category;
         OtherValues = receipt.OtherValues;
+        TaskId = receipt.TaskId;
+        ReceiptIndex = receipt.ReceiptIndex;
     }
     public List<SimpleItem> Items { get; set; }
     public string ShopName { get; set; }
@@ -19,4 +21,7 @@ public class SimpleReceipt
     public double TotalPrice { get; set; }
     public string Category { get; set; }
     public Dictionary<string, string> OtherValues { get; set; }
+
+    public string TaskId { get; set; }
+    public int ReceiptIndex { get; set; }
 }

@@ -47,6 +47,12 @@ public class JobService
         return OcrJobs.Where(x => x.Image.UserId == user.Id).ToList();
     }
 
+    public List<Receipt> GetReceiptByUser(User user)
+    {
+        var jobs = GetJobsByUser(user);
+        return jobs.SelectMany(c => c.GetReceiptsWithReference()).ToList();
+    }
+
     public async Task<ScanTask> GetGptClient()
     {
         return await AddJob(new GptReceiptClient(RezApi.Settings.OpenAiApiKey));

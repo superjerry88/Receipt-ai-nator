@@ -45,6 +45,10 @@ public class UserSignUp
     public async Task<User> Signup()
     {
         var user = new User(this);
+        if (RezApi.Users.AllUsers.Count > 25)
+        {
+            user.FreeTokenBalance = 5000; //limit the token incase it got spammed
+        }
         RezApi.Users.AllUsers.Add(user);
         await RezApi.DbManager.User.AddUser(user);
         return user;

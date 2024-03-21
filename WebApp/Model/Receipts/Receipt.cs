@@ -1,4 +1,7 @@
-﻿namespace WebApp.Model.Receipts;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
+
+namespace WebApp.Model.Receipts;
 
 public class Receipt
 {
@@ -19,4 +22,14 @@ public class Receipt
     public double TotalPrice { get; set; }
     public string Category { get; set; }
     public Dictionary<string, string> OtherValues { get; set; } = new Dictionary<string, string>();
+
+    [BsonIgnore]
+    [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string TaskId { get; set; } = "";
+
+    [BsonIgnore]
+    [JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public int ReceiptIndex { get; set; } = 0;
 }

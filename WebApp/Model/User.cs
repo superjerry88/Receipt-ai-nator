@@ -21,7 +21,7 @@ namespace WebApp.Model
         public bool IsAdmin { get; set; }
         public bool HasOpenAiKey => !string.IsNullOrEmpty(EncryptedOpenAiKey);
         public string EncryptedOpenAiKey { get; set; }
-        public int FreeTokenBalance { get; set; } = 50000;
+        public int FreeTokenBalance { get; set; } = 20000;
         public List<ApiInfo> ApiKeys { get; set; } = new List<ApiInfo>();
 
         public User(UserSignUp signUp)
