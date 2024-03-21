@@ -1,0 +1,36 @@
+﻿<div class="relative p-6 rounded-2xl bg-white shadow dark:bg-gray-800">
+    <div class="flex items-center">
+        <div class="flex-grow space-y-2 p-3">
+            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <span>@Header</span>
+            </div>
+
+            <div class="select-none">
+                <div class="w-full hover:cursor-pointer text-center hover:text-slate-500" @onclick="Toggle">
+                    <Icon Name="@(IsToggled ? IconName.ExpandLess : IconName.ExpandMore)" />
+                </div>
+
+                @if (IsToggled)
+                {
+                    <div class="mt-2">@ChildContent</div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Header { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = null!;
+
+    public bool IsToggled = false;
+
+    public void Toggle()
+    {
+        IsToggled = !IsToggled;
+    }
+}
