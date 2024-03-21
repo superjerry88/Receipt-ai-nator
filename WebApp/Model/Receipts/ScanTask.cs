@@ -15,6 +15,8 @@ public class ScanTask
     public bool IsCompleted { get; set; } = false;
     public bool IsError { get; set; } = false;
     public bool IsTerminated { get; set; } = false;
+    public string ErrorMessage { get; set; } = "";
+    public string ErrorStackTrace { get; set; } = "";
     public ScanResult? Result { get; set; }
     public TimeSpan TimeTaken { get; set; }
     public ImageInfo Image { get; set; }
@@ -54,6 +56,8 @@ public class ScanTask
             IsError = true;
             IsCompleted = true;
             TimeTaken = sw.Elapsed;
+            ErrorMessage = e.Message;
+            ErrorStackTrace = e.StackTrace!;
             OnError?.Invoke(this, e);
         }
         if (Result is { TokenConsumed: > 0, UsingSiteToken: true })
