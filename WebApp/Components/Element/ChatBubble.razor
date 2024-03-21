@@ -1,0 +1,40 @@
+﻿@switch (Type)
+{
+    case ChatBubbleType.Left:
+        <div class="flex items-center justify-start">
+            <div class="w-3 overflow-hidden">
+                <div class="h-4 bg-green-600 rotate-45 transform origin-bottom-right rounded-sm"></div>
+            </div>
+            <div class="bg-green-600 p-4 my-2 rounded-lg flex-1" style="white-space:pre-line">
+                @ChildContent
+            </div>
+        </div>
+        break;
+
+    case ChatBubbleType.Right:
+        <div class="flex items-center justify-end">
+            <div class="bg-blue-600 p-4 my-2 rounded-lg flex-1" style="white-space:pre-line">
+               @ChildContent
+            </div>
+            <div class="w-3 overflow-hidden ">
+                <div class="h-4 bg-blue-600 rotate-45 transform origin-top-left rounded-sm"></div>
+            </div>
+        </div>
+        break;
+
+}
+
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public ChatBubbleType Type { get; set; }
+
+    public enum ChatBubbleType
+    {
+        Left,
+        Right
+    }
+}
