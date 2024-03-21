@@ -7,6 +7,9 @@
 @if (_chatClient != null)
 {
     <ChatGroup>
+        <Alert Color="Color.Dark" Visible>
+            <AlertDescription>The chat feature uses tokens from your account.</AlertDescription>
+        </Alert>
 
         @foreach (var chat in _chatClient.Chats)
         {
