@@ -1,11 +1,21 @@
 ﻿<div class="grid grid-cols-3 mb-1 pb-2">
-    <dt class="text-sm font-medium text-white font-medium">
-        @Label
-    </dt>
+    
+    @if (Label != "!Separator!")
+    {
+        <dt class="text-sm font-medium text-white font-medium">
+            @Label
+        </dt>
 
-    <dd class="text-sm text-slate-300 col-span-2">
-        @ChildContent
-    </dd>
+        <dd class="text-sm text-slate-300 col-span-2">
+            @ChildContent
+        </dd>
+    } 
+    else
+    {
+        <div class="w-full border-b-2 col-span-3 border-dotted my-2"></div>
+    }
+
+
 </div>
 
 @code {
