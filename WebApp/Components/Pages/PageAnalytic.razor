@@ -25,30 +25,34 @@
     </AnalyticsContainer>
 
     <AnalyticsContainerCollapse Header="Highest Spending Categories (All Time)">
-        @foreach (var Category in Analytic.CategorySpendingAllTime) 
+        @foreach (var category in Analytic.CategorySpendingAllTime) 
         {
-            <AnalyticsInfo Header="@Category.Key" Percentage="@(Category.Value / Analytic.TotalSpentAllTime)">@Category.Value.FixString(true)</AnalyticsInfo>
+            <AnalyticsInfo Header="@category.Key" Percentage="@(category.Value / Analytic.TotalSpentAllTime)">@category.Value.FixString(true)</AnalyticsInfo>
         }
     </AnalyticsContainerCollapse>
 
     <AnalyticsContainerCollapse Header="Highest Spending Categories (This Month)">
-        @foreach (var Category in Analytic.CategorySpendingThisMonth)
+        @foreach (var category in Analytic.CategorySpendingThisMonth)
         {
-            <AnalyticsInfo Header="@Category.Key" Percentage="@(Category.Value / Analytic.TotalSpentThisMonth)">@Category.Value.FixString(true)</AnalyticsInfo>
+            <AnalyticsInfo Header="@category.Key" Percentage="@(category.Value / Analytic.TotalSpentThisMonth)">@category.Value.FixString(true)</AnalyticsInfo>
         }
     </AnalyticsContainerCollapse>
 
     <AnalyticsContainerCollapse Header="Highest Spending Receipts (All Time)">
-        @foreach (var Receipt in Analytic.TopSpendingAllTime) 
+        @foreach (var receipt in Analytic.TopSpendingAllTime) 
         {
-            <AnalyticsInfo Header="@Receipt.ReceiptId" Percentage="@(Receipt.TotalPrice / Analytic.TotalSpentAllTime)">@Receipt.TotalPrice.FixString(true)</AnalyticsInfo>
+            <AnalyticsInfo Header="@receipt.ShopName" Percentage="@(receipt.TotalPrice / Analytic.TotalSpentAllTime)" TaskId="@receipt.TaskId">
+                @receipt.TotalPrice.FixString(true)
+            </AnalyticsInfo>
         }
     </AnalyticsContainerCollapse>
 
     <AnalyticsContainerCollapse Header="Highest Spending Receipts (This Month)">
-        @foreach (var Receipt in Analytic.TopSpendingThisMonth)
+        @foreach (var receipt in Analytic.TopSpendingThisMonth)
         {
-            <AnalyticsInfo Header="@Receipt.ReceiptId" Percentage="@(Receipt.TotalPrice / Analytic.TotalSpentThisMonth)">@Receipt.TotalPrice.FixString(true)</AnalyticsInfo>
+            <AnalyticsInfo Header="@receipt.ShopName" Percentage="@(receipt.TotalPrice / Analytic.TotalSpentThisMonth)" TaskId="@receipt.TaskId">
+                @receipt.TotalPrice.FixString(true)
+            </AnalyticsInfo>
         }
     </AnalyticsContainerCollapse>
 
