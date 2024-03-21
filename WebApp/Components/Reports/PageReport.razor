@@ -19,7 +19,7 @@
 }
 else
 {
-    @if(ScanTask.IsCompleted)
+    @if(ScanTask.IsCompleted || ScanTask.IsTerminated)
     {
         <Card Class="p-3">
             <DisplayGroup>
@@ -28,6 +28,14 @@ else
                     <Alert Color="Color.Danger" Visible>
                         <AlertMessage>Error processing: </AlertMessage>
                         <AlertDescription>@ScanTask.ErrorMessage</AlertDescription>
+                    </Alert>
+                }
+
+                @if (ScanTask.IsTerminated)
+                {
+                    <Alert Color="Color.Danger" Visible>
+                        <AlertMessage>Task Terminated </AlertMessage>
+                        <AlertDescription>This is the server's fault. Please try again</AlertDescription>
                     </Alert>
                 }
 
