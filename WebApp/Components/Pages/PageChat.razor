@@ -39,8 +39,8 @@
             }
 
         }
-        
-        @if(!_chatClient.IsTyping && _chatClient.Chats.Count < 7)
+
+        @if (!_chatClient.IsTyping && _chatClient.Chats.Count < 7 && _chatClient.HasEnoughToken())
         {
             <FieldBody Class="p-4 my-2" ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
                 <MemoEdit @ref="_memo" Disabled="Disabled" Rows="5" Placeholder="@PlaceHolder" KeyPress="OnKeyPressed" @bind-Text="CurrentMessage"/>
@@ -51,6 +51,13 @@
             <ChatBubble Type="ChatBubble.ChatBubbleType.Left">
                 <Text>Chat ended to save tokens in prototype mode.</Text>
                 <Button Clicked="RefreshPage" Color="Color.Secondary" Class="shadow-lg">Refresh to start a new chat.</Button>
+            </ChatBubble>
+        }
+        
+        @if(!_chatClient.HasEnoughToken())
+        {
+            <ChatBubble Type="ChatBubble.ChatBubbleType.Left">
+                <Text>Chat ended due to insufficient tokens.</Text>
             </ChatBubble>
         }
 

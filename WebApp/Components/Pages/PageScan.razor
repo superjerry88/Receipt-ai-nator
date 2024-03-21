@@ -19,7 +19,7 @@
     </Alert>
 }
 
-@if (_imageInfo == null)
+@if (_imageInfo == null && !isUserBroke)
 {
     <Alert Color="Color.Dark" Visible>
         <AlertDescription>Please select your receipt image</AlertDescription>
@@ -27,8 +27,14 @@
     <div class="flex justify-center items-center">
         <InputFile accept="image/*" OnChange="HandleImageCapture" />
     </div>
-    
 }
+else if (_imageInfo == null && isUserBroke)
+{
+    <Alert Color="Color.Warning" Visible>
+        <AlertDescription>Insufficient credit</AlertDescription>
+    </Alert>
+}
+
 
 @if (_imageInfo is { IsImage: true })
 {
@@ -65,6 +71,17 @@
     private ImageInfo? _imageInfo = null;
     private ImageInfoStatus? _copyStatus = null;
     private ImageInfoStatus? _processStatus = null;
+
+    private bool isUserBroke = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await CurrentSession.GetUser();
+        if(user != null)
+        {
+            isUserBroke = user is { HasOpenAiKey: false, FreeTokenBalance: <= 0 };
+        }
+    }
 
     private async Task HandleImageCapture(InputFileChangeEventArgs e)
     {

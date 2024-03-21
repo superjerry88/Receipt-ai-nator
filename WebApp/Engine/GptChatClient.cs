@@ -83,8 +83,16 @@ public class GptChatClient
         Chats.Add(ChatInfo.GetSystemChat(UserId, SessionId, StartingChat));
     }
 
+    public bool HasEnoughToken()
+    {
+        if (IsUsingUsersToken) return true;
+        var user = RezApi.Users.GetUser(UserId);
+        return user?.FreeTokenBalance > 0;
+    }
+
     public async Task AddQuestion(string question)
     {
+
         //Set Question 
         AddChat(ChatInfo.GetUserChat(UserId, SessionId, question));
         SetTyping(true);
