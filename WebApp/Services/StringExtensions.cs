@@ -6,7 +6,7 @@
         {
             if (input == null)
             {
-                return "";
+                return "Not Available";
             }
 
             var word = input.ToString();
