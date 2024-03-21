@@ -1,5 +1,4 @@
 ﻿@page "/Reports/{TaskId}"
-@using Blazorise.Extensions
 @using Newtonsoft.Json
 @implements IDisposable
 @inject NavigationManager NavigationManager
@@ -24,9 +23,16 @@ else
     {
         <Card Class="p-3">
             <DisplayGroup>
+                @if(ScanTask.IsError)
+                {
+                    <Alert Color="Color.Danger" Visible>
+                        <AlertMessage>Error processing: </AlertMessage>
+                        <AlertDescription>@ScanTask.ErrorMessage</AlertDescription>
+                    </Alert>
+                }
+
                 <DisplayInfo Label="Completed:">@(ScanTask.IsCompleted ? "Yes" : "No")</DisplayInfo>
-                <DisplayInfo Label="Error Detected:">@(ScanTask.IsCompleted ? "Yes" : "No")</DisplayInfo>
-                <DisplayInfo Label="Time Taken:">@(ScanTask.TimeTaken.TotalMilliseconds / 1000)s</DisplayInfo>
+                <DisplayInfo Label="Time Taken:">@(ScanTask.TimeTaken.TotalSeconds)s</DisplayInfo>
                 @if (ScanTask.Result != null)
                 {
                     <DisplayInfo Label="Tokens Consumed:">@ScanTask.Result.TokenConsumed</DisplayInfo>
@@ -49,6 +55,12 @@ else
                 
                 }
             }
+            
+            <DisplayCollapse Header="Image">
+                <div class="flex justify-center items-center pb-3">
+                    <img src="@ScanTask.Image.UrlPath" alt="Preview" style="max-width: 100%; max-height: 800px;"/>
+                </div>
+            </DisplayCollapse>
         </Card>
     }
     else
@@ -89,6 +101,7 @@ else
     {
         Console.WriteLine("ON ERROR");
         Console.WriteLine(e);
+        UpdateJson();
     }
 
     private void OnComplete(object? sender, ScanTask task)
@@ -110,7 +123,6 @@ else
         {
             ScanTask.OnComplete -= OnComplete;
             ScanTask.OnError -= OnError;
-            Console.WriteLine($"Disposed event for {TaskId}");
         }
     }
 
