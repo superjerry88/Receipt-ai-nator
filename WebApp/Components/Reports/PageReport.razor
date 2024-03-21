@@ -39,14 +39,35 @@ else
                     </Alert>
                 }
 
-                <DisplayInfo Label="Completed:">@(ScanTask.IsCompleted ? "Yes" : "No")</DisplayInfo>
+                <DisplayInfo Label="Completed:">
+                    @if(ScanTask.IsCompleted)
+                    {
+                        <Badge Color="Color.Success">Yes</Badge>
+                    }
+                    else
+                    {
+                        <Badge Color="Color.Danger">No</Badge>
+                    }
+                </DisplayInfo>
                 <DisplayInfo Label="Time Taken:">@(ScanTask.TimeTaken.TotalSeconds)s</DisplayInfo>
                 @if (ScanTask.Result != null)
                 {
                     <DisplayInfo Label="Tokens Consumed:">@ScanTask.Result.TokenConsumed</DisplayInfo>
                     <DisplayInfo Label="Using Free Tokens:">@(ScanTask.Result.UsingSiteToken ? "Yes" : "No")</DisplayInfo>
                     <DisplayInfo Label="Total Receipts Found in Image:">@ScanTask.Result.Receipts.Count</DisplayInfo>
+
+
+                    <DisplayInfo Label="Remarks:">
+                        @foreach (var remark in ScanTask.Result.Remarks)
+                        {
+                            <Badge Color="Color.Dark">@remark</Badge>
+                            <br/>
+                        }
+                    </DisplayInfo>
                 }
+                
+                
+                
             </DisplayGroup>
             
 
