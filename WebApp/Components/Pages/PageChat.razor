@@ -1,0 +1,113 @@
+﻿@page "/pageChat"
+@inject ChatService ChatService
+@inject NavigationManager NavigationManager
+
+@implements IDisposable 
+
+@if (_chatClient != null)
+{
+    <ChatGroup>
+
+        @foreach (var chat in _chatClient.Chats)
+        {
+            switch (chat.Type)
+            {
+                case ChatType.System:
+                    <ChatBubble Type="ChatBubble.ChatBubbleType.Left">
+                        
+                        @if (chat.Message.IsNullOrEmpty())
+                        {
+                            <img src="https://walfiegif.files.wordpress.com/2023/07/out-transparent-15.gif" class="max-h-20 mx-auto" />
+                            <Text>Chat Processing...</Text>
+                        }
+                        else
+                        {
+                            @chat.Message
+                        }
+                    </ChatBubble>
+                    break;
+                case ChatType.User:
+                    <ChatBubble Type="ChatBubble.ChatBubbleType.Right">
+                        @chat.Message
+                    </ChatBubble>
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+        }
+        
+        @if(!_chatClient.IsTyping && _chatClient.Chats.Count < 7)
+        {
+            <FieldBody Class="p-4 my-2" ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+                <MemoEdit @ref="_memo" Disabled="Disabled" Rows="5" Placeholder="@PlaceHolder" KeyPress="OnKeyPressed" @bind-Text="CurrentMessage"/>
+            </FieldBody>
+        }
+        @if(_chatClient.Chats.Count >= 7)
+        {
+            <ChatBubble Type="ChatBubble.ChatBubbleType.Left">
+                <Text>Chat ended to save tokens in prototype mode.</Text>
+                <Button Clicked="RefreshPage" Color="Color.Secondary" Class="shadow-lg">Refresh to start a new chat.</Button>
+            </ChatBubble>
+        }
+
+    </ChatGroup>
+}
+
+    
+@code {
+
+    GptChatClient? _chatClient;
+    MemoEdit _memo;
+
+    private string CurrentMessage { get; set; }= "";
+
+    private string PlaceHolder => _chatClient is { IsTyping: true } ? "Please wait for the respond to finish...." : "Enter something here..";
+    private bool Disabled => _chatClient is { IsTyping: true };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _chatClient = await ChatService.GetChatClient();
+        _chatClient.IsClientTyping += OnClientTypingChanged;
+        _chatClient.NewChat += OnNewChat;
+    }
+
+    private void OnClientTypingChanged(object? sender, bool e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnNewChat(object? sender, ChatInfo e)
+    {
+        CurrentMessage = "";
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnKeyPressed(KeyboardEventArgs obj)
+    {
+        //Avoid newline triggering it
+        var isSubmit = obj is { Key: "Enter", ShiftKey: false }; 
+        if (isSubmit && _chatClient!=null)
+        {
+            var msg = CurrentMessage;
+            await _chatClient.AddQuestion(msg);
+        }
+    }
+
+    private void RefreshPage()
+    {
+        NavigationManager.NavigateTo("/pageChat",true);
+    }
+
+    public void Dispose()
+    {
+        if (_chatClient != null)
+        {
+            _chatClient.NewChat -= OnNewChat;
+        }
+    }
+
+    
+
+}
+
