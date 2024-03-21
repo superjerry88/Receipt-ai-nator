@@ -1,0 +1,150 @@
+﻿@page "/admin"
+@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+
+@if(!_isAdmin)
+{
+    <Alert Color="Color.Danger" Visible>
+        <AlertMessage>Unauthorized</AlertMessage>
+        <AlertDescription>You are not authorized to view this page</AlertDescription>
+    </Alert>
+    return;
+}
+
+<DisplayCollapse Header="Tools">
+    <h3>Secret Admin Page</h3>
+    <Button Clicked="AddCreditToEveryone" Color="Color.Primary">Grants everyone free credit</Button>
+    <Button Clicked="FixApiKey" Color="Color.Primary">Fix empty ApiKey issue</Button>
+</DisplayCollapse>
+
+<DisplayCollapse Header="Task">
+    <Card>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHeaderCell>Status</TableHeaderCell>
+                    <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell>Dates</TableHeaderCell>
+                    <TableHeaderCell>Action</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <Virtualize Items="AllTask" Context="res">
+                    <TableRow>
+                        <TableRowCell>
+                            @if (res.IsCompleted && !res.IsError)
+                            {
+                                <Badge Color="Color.Success">Done</Badge>
+                            }
+                            else {if (res.IsError)
+                                {
+                                    <Badge Color="Color.Danger">Error</Badge>
+                                }
+                                else if (res.IsTerminated)
+                                {
+                                    <Badge Color="Color.Danger">Terminated</Badge>
+                                }
+                                else
+                                {
+                                    <Badge Color="Color.Info">Processing</Badge>
+                                }
+                            }
+                        </TableRowCell>
+                        <TableRowCell>
+                            @RezApi.Users.GetUser(res.Image.UserId)?.Username
+                        </TableRowCell>
+                        <TableRowCell>
+                            @res.CreatedAt.ToLocalTime().ToString("G");
+                        </TableRowCell>
+                        <TableRowCell>
+                            <Button Clicked="() => GoToReport(res.Id)" Color="Color.Primary">View</Button>
+                        </TableRowCell>
+                    </TableRow>
+                </Virtualize>
+            </TableBody>
+        </Table>
+    </Card>
+</DisplayCollapse>
+
+<DisplayCollapse Header="Accounts">
+    <Card>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell>Email</TableHeaderCell>
+                    <TableHeaderCell>Tokens</TableHeaderCell>
+                    <TableHeaderCell>Has API</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <Virtualize Items="AllUser" Context="user">
+                    <TableRow>
+                        <TableRowCell>
+                           @user.Username
+                        </TableRowCell>
+                        <TableRowCell>
+                            @user.Email
+                        </TableRowCell>
+                        <TableRowCell>
+                            @user.FreeTokenBalance
+                        </TableRowCell>
+                        <TableRowCell>
+                            @user.HasOpenAiKey
+                        </TableRowCell>
+                    </TableRow>
+                </Virtualize>
+            </TableBody>
+        </Table>
+    </Card>
+</DisplayCollapse>
+
+@code {
+    private bool _isAdmin = false;
+    private List<ScanTask> AllTask { get; set; } = new List<ScanTask>();
+    private List<User> AllUser { get; set; } = new List<User>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await CurrentSession.GetUser();
+        _isAdmin = user?.IsAdmin ?? false;
+        AllTask = RezApi.Jobs.OcrJobs.OrderByDescending(c => c.CreatedAt).ToList();
+        AllUser = RezApi.Users.AllUsers;
+    }
+
+    private async void AddCreditToEveryone()
+    {
+        var brokeUser = RezApi.Users.AllUsers.Where(c => c.FreeTokenBalance == 0).ToList();
+        foreach (var user in brokeUser)
+        {
+            user.FreeTokenBalance = 50000;
+        }
+        if(brokeUser .Count > 0)
+        {
+            await RezApi.DbManager.User.AddOrUpdateUserMany(brokeUser);
+        }
+        Console.WriteLine("Done");
+    }
+
+    private async void FixApiKey()
+    {
+        var brokeUser = RezApi.Users.AllUsers.Where(c => c.ApiKeys == null).ToList();
+        foreach (var user in brokeUser)
+        {
+            user.ApiKeys = new List<ApiInfo>();
+        }
+
+        if (brokeUser.Count > 0)
+        {
+            await RezApi.DbManager.User.AddOrUpdateUserMany(brokeUser);
+        }
+
+        Console.WriteLine("Done");
+    }
+
+    public void GoToReport(string taskId)
+    {
+        NavigationManager.NavigateTo($"/Reports/{taskId}");
+    }
+
+}
