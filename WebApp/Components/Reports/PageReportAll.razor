@@ -17,7 +17,7 @@
                 <Virtualize Items="Results" Context="res">
                     <TableRow>
                         <TableRowCell>
-                            @if (res.IsCompleted)
+                            @if (res.IsCompleted && !res.IsError)
                             {
                                 <Badge Color="Color.Success">Done</Badge>
                             }
