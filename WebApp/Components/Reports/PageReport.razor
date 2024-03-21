@@ -22,31 +22,34 @@ else
 {
     @if(ScanTask.IsCompleted)
     {
-        <h1>Completed: @ScanTask.IsCompleted</h1>
-        <h1>Error: @ScanTask.IsError</h1>
-        <h1>TimeTaken : @ScanTask.TimeTaken.TotalMilliseconds ms</h1>
-        
+        <Card Class="p-3">
+            <DisplayGroup>
+                <DisplayInfo Label="Completed:">@(ScanTask.IsCompleted ? "Yes" : "No")</DisplayInfo>
+                <DisplayInfo Label="Error Detected:">@(ScanTask.IsCompleted ? "Yes" : "No")</DisplayInfo>
+                <DisplayInfo Label="Time Taken:">@(ScanTask.TimeTaken.TotalMilliseconds / 1000)s</DisplayInfo>
+                @if (ScanTask.Result != null)
+                {
+                    <DisplayInfo Label="Tokens Consumed:">@ScanTask.Result.TokenConsumed</DisplayInfo>
+                    <DisplayInfo Label="Using Free Tokens:">@(ScanTask.Result.UsingSiteToken ? "Yes" : "No")</DisplayInfo>
+                    <DisplayInfo Label="Total Receipts Found in Image:">@ScanTask.Result.Receipts.Count</DisplayInfo>
+                }
+            </DisplayGroup>
+            
 
-        @if (ScanTask.Result != null)
-        {
-            <h1>Token consumed: @ScanTask.Result.TokenConsumed</h1>
-            <h1>Using Free Token: @ScanTask.Result.UsingSiteToken</h1>
-            <p>Total Receipt in image: @ScanTask.Result.Receipts.Count</p>
-            <p>---</p>
-
-            @for (var index = 0; index < ScanTask.Result.Receipts.Count; index++)
+            @if (ScanTask.Result != null)
             {
+                @for (var index = 0; index < ScanTask.Result.Receipts.Count; index++)
+                {
                 
-                var currentIndex = index;
-                var receipt = ScanTask.Result.Receipts[currentIndex];
-                <div class="pb-3">
-                    <Button Block Color="Color.Success" Clicked="() => GoToReceipt(currentIndex)"> View Receipt No.@currentIndex [RM @receipt.TotalPrice] </Button>
-                </div>
+                    var currentIndex = index;
+                    var receipt = ScanTask.Result.Receipts[currentIndex];
+                    <div class="pb-3 w-[96%] align-middle mx-auto">
+                        <Button Block Color="Color.Success" Clicked="() => GoToReceipt(currentIndex)"> View Receipt No.@(currentIndex+1) [RM @receipt.TotalPrice] </Button>
+                    </div>
                 
+                }
             }
-        }
-        <pre>@Json</pre>
-        
+        </Card>
     }
     else
     {
