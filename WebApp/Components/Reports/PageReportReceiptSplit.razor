@@ -1,0 +1,179 @@
+﻿@page "/Reports/{TaskId}/{index}/Split"
+
+<Breadcrumb>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/reports">Reports</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem >
+        <BreadcrumbLink To="@ReportPage">JobTask</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="@ReceiptPage">Receipt</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Active>
+        <BreadcrumbLink To="#">Split Bill</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+@if (IsLoaded && SplitItems.Any())
+{
+    <Card Class="p-3">
+        
+        @if (!IsFinalized)
+        {
+            <Alert Color="Color.Success" Visible>
+                <AlertMessage>You are currently selecting as</AlertMessage>
+                <Badge Color="@GetColor(CurrentPerson)">P @CurrentPerson</Badge>
+                <br/>
+                - Select your items and click 'Next Person' to allow the next participant to choose their items for bill splitting.
+                <br/>
+                - Displayed items are listed with a quantity of one.
+                <br/>
+                - A single item can be shared among multiple people.
+                <br/>
+                - After everyone has made their selections, click 'Finalize' to calculate each person's share of the total cost.
+            </Alert>
+            <div class="flex justify-center items-center">
+                @if(CurrentPerson > 1)
+                {
+                    <button @onclick="() => CurrentPerson--" type="button" class="text-white bg-gradient-to-r from-cyan-500 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                        Prev Person
+                    </button>
+                }
+                <button @onclick="() => IsFinalized = true" type="button" class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                    Finalize
+                </button>
+                <button @onclick="() => CurrentPerson++" type="button" class="text-white bg-gradient-to-r from-cyan-500 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                    Next Person
+                </button>
+            </div>
+            @foreach (var split in SplitItems)
+            {
+                <div @onclick="() => SplitToggle(split)">
+                    <DisplayGroup>
+                        <DisplayInfo Label="Item Name">@split.Item.Name.FixString()</DisplayInfo>
+                            <DisplayInfo Label="Item Description">@split.Item.Description.FixString()</DisplayInfo>
+                        <DisplayInfo Label="Price per Item">@split.Item.PricePerItem.FixString(true)</DisplayInfo>
+                        @foreach (var person in split.Person)
+                        {
+                            <Badge Color="@GetColor(person)">P @person</Badge>
+                        }
+                    </DisplayGroup>
+                </div>
+            }
+        }
+        else
+        {
+            <button @onclick="() => IsFinalized = false" type="button" class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                Modify
+            </button>
+            <Card Class="p-3">
+
+                @for (var i = 1; i <= GetMaxPerson(); i++)
+                {
+                    var current = i;
+                    <DisplayGroup>
+
+                        <DisplayInfo Label="Person">
+                            <Badge Color="@GetColor(current)">P @current</Badge>
+                        </DisplayInfo>
+                            <DisplayInfo Label="Total Items">@TotalItems(current)</DisplayInfo>
+                        <DisplayInfo Label="Total Cost">@TotalPrice(current)</DisplayInfo>
+                    </DisplayGroup>
+                }
+
+            </Card>
+        }
+    </Card>
+}
+else
+{
+    <h1>No receipt items to split</h1>
+    <Button>Go Back</Button>
+}
+
+@code {
+    [Parameter] 
+    public string TaskId { get; set; } = "";
+
+    [Parameter] 
+    public string Index { get; set; } = "";
+
+    //For loading 
+    private ScanTask? ScanTask { get; set; }
+    private Receipt? Receipt { get; set; }
+    private bool IsLoaded { get; set; } = false;
+
+    private List<SplitItem> SplitItems { get; set; } = new List<SplitItem>();
+    private int CurrentPerson { get; set; } = 1;
+    private bool IsFinalized { get; set; } = false;
+
+    private string ReportPage => "/Reports/" + TaskId;
+    private string ReceiptPage => "/Reports/" + TaskId + "/" + Index;
+
+    private string TotalPrice(int current) => "RM" + SplitItems.Where(c => c.Person.Contains(current)).Sum(c => c.SplitPrice).ToString("00.00");
+    private string TotalItems(int current) => SplitItems.Count(c => c.Person.Contains(current)).ToString();
+
+
+    protected override void OnInitialized()
+    {
+        ScanTask = RezApi.Jobs.GetJob(TaskId);
+        if (int.TryParse(Index, out var index))
+        {
+            Receipt = ScanTask?.Result?.Receipts.ElementAtOrDefault(index);
+        }
+
+        if (Receipt != null)
+        {
+            foreach (var receiptItem in Receipt.Items)
+            {
+                for (var i = 0; i < receiptItem.Quantity; i++)
+                {
+                    SplitItems.Add(new SplitItem(receiptItem));
+                }
+            }
+        }
+        IsLoaded = true;
+    }
+
+    private void SplitToggle(SplitItem item)
+    {
+        if (item.Person.Contains(CurrentPerson))
+        {
+            item.Person.Remove(CurrentPerson);
+        }
+        else
+        {
+            item.Person.Add(CurrentPerson);
+        }
+    }
+
+    public Color GetColor(int person)
+    {
+        person %= 6;
+        return person switch
+        {
+            1 => Color.Warning,
+            2 => Color.Danger,
+            3 => Color.Secondary,
+            4 => Color.Primary,
+            5 => Color.Info,
+            6 => Color.Light,
+            _ => Color.Primary
+        };
+    }
+
+    private int GetMaxPerson()
+    {
+        return !SplitItems.SelectMany(item => item.Person).Any() ? 1 : SplitItems.SelectMany(item => item.Person).Max();
+    }
+    
+
+    private class SplitItem(Items item)
+    {
+        public Items Item { get; set; } = item;
+        public List<int> Person { get; set; } = new();
+        public double SplitPrice => Item.PricePerItem / Person.Count;
+        
+    }
+}

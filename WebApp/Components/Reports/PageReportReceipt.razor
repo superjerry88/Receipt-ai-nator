@@ -1,5 +1,7 @@
 ﻿@page "/Reports/{TaskId}/{index}"
-@using Blazorise.Extensions
+@inject NavigationManager NavigationManager
+@using System.Web
+
 
 <Breadcrumb>
     <BreadcrumbItem>
@@ -51,6 +53,18 @@
             <DisplayGroup>
                 <DisplayInfo Label="Shop Name"> @Receipt.ShopName.FixString() </DisplayInfo>
                 <DisplayInfo Label="Shop Address"> @Receipt.ShopAddress.FixString() </DisplayInfo>
+                @if (!string.IsNullOrWhiteSpace(Receipt.ShopAddress))
+                {
+                    <iframe
+                        width="100%"
+                        height="450"
+                        style="border:0"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="@GetMapSrc()">
+                    </iframe>
+                }
             </DisplayGroup>
         </DisplayCollapse>
 
@@ -68,6 +82,12 @@
                     <Badge Color="Color.Success">@Receipt.TotalPrice.FixString(true)</Badge>
                 </DisplayInfo>
             </DisplayGroup>
+        </DisplayCollapse>
+
+        <DisplayCollapse Header="Utility">
+            <div class="p-3">
+                <Button Block Color="Color.Primary" Clicked="SplitBill">Split Bill</Button>
+            </div>
         </DisplayCollapse>
         
 
@@ -91,11 +111,7 @@ else
     private Receipt? Receipt { get; set; }
     private bool IsLoaded { get; set; } = false;
 
-    private bool[] Toggle { get; set; } = { false, false, false, false };
-    private string[] Categories { get; set; } = { "Items", "Shop Details", "Totals", "Additional Details" };
-
     private string ReportPage => "/Reports/" + TaskId;
-
 
     protected override void OnInitialized()
     {
@@ -105,5 +121,18 @@ else
             Receipt = ScanTask?.Result?.Receipts.ElementAtOrDefault(index);
         }
         IsLoaded = true;
+    }
+
+    private void SplitBill()
+    {
+        NavigationManager.NavigateTo($"/Reports/{TaskId}/{Index}/split");
+    }
+
+    private string GetMapSrc()
+    {
+        //retarded google and their restrictive pay to free trial embded API key, this can be seen in network tab so its fine leaving it here
+        var apiKey = "AIzaSyDcmtc5KIomjT3V_YCcfWjaw91ljYZ-lU0";
+        var address = HttpUtility.UrlEncode(Receipt?.ShopAddress);
+        return $"https://www.google.com/maps/embed/v1/place?key={apiKey}&q={address}";
     }
 }
