@@ -3,6 +3,7 @@ using OpenAI;
 using OpenAI.Managers;
 using OpenAI.ObjectModels;
 using OpenAI.ObjectModels.RequestModels;
+using OpenAI.Tokenizer.GPT3;
 using WebApp.Model;
 using WebApp.Model.Chat;
 using WebApp.Model.Receipts;
@@ -20,6 +21,7 @@ public class GptChatClient
 
     public event EventHandler<ChatInfo> NewChat = null!;
     public event EventHandler<bool> IsClientTyping = null!;
+    public event EventHandler MsgUpdated = null!;
 
     private OpenAIService Client { get; }
 
@@ -56,7 +58,7 @@ public class GptChatClient
             IsUsingUsersToken = false;
         }
 
-        //Get the latest 6 simplified receipts based on current user
+        //Get the latest 10 simplified receipts based on current user
         var receipts = RezApi.Jobs
             .GetJobsByUser(user)
             .Where(scan => scan is { IsCompleted: true, Result: not null })
@@ -115,6 +117,59 @@ public class GptChatClient
         }
         Console.WriteLine($"Used: {gptResponse.Usage.TotalTokens}");
 
+        //Set response as complete
+        SetTyping(false);
+    }
+
+    public async Task AddQuestionStream(string question)
+    {
+
+        //Set Question 
+        AddChat(ChatInfo.GetUserChat(UserId, SessionId, question));
+        SetTyping(true);
+
+        //Set response placeholder
+        var msgResponse = ChatInfo.GetSystemChat(UserId, SessionId, "");
+        AddChat(msgResponse);
+
+        //why does this line fixed the visual rendering ??? WHY ???? 
+        await Task.Delay(10);
+        
+        //Get response
+        Prompt.Messages.Add(ChatMessage.FromUser(question));
+
+        var fullMessage = "";
+        var gptResponse =  Client.ChatCompletion.CreateCompletionAsStream(Prompt);
+        
+        await foreach (var completion in gptResponse)
+        {
+            if (completion.Successful)
+            {
+                fullMessage += completion.Choices.FirstOrDefault()?.Message.Content;
+                msgResponse.Message = fullMessage;
+                MsgUpdated?.Invoke(this,null!);
+            }
+            else
+            {
+                if (completion.Error == null)
+                {
+                    throw new Exception("Unknown Error");
+                }
+
+                Console.WriteLine($"{completion.Error.Code}: {completion.Error.Message}");
+            }
+        }
+
+        Prompt.Messages.Add(ChatMessage.FromSystem(msgResponse.Message));
+
+        var allText = string.Join(".", Prompt.Messages.Select(x => x.Content));
+        var tokens = TokenizerGpt3.TokenCount(allText, true);
+        Console.WriteLine($"Used: {tokens} tokens");
+
+        if (!IsUsingUsersToken)
+        {
+            await RezApi.Users.ConsumeToken(UserId, tokens);
+        }
         //Set response as complete
         SetTyping(false);
     }

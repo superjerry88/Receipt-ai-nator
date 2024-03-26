@@ -114,10 +114,10 @@
 
     private async void AddCreditToEveryone()
     {
-        var brokeUser = RezApi.Users.AllUsers.Where(c => c.FreeTokenBalance == 0).ToList();
+        var brokeUser = RezApi.Users.AllUsers.Where(c => c.FreeTokenBalance < 100).ToList();
         foreach (var user in brokeUser)
         {
-            user.FreeTokenBalance = 50000;
+            user.FreeTokenBalance = 20000;
         }
         if(brokeUser .Count > 0)
         {

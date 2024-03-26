@@ -37,13 +37,12 @@
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
         }
 
         @if (!_chatClient.IsTyping && _chatClient.Chats.Count < 7 && _chatClient.HasEnoughToken())
         {
             <FieldBody Class="p-4 my-2" ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
-                <MemoEdit @ref="_memo" Disabled="Disabled" Rows="5" Placeholder="@PlaceHolder" KeyPress="OnKeyPressed" @bind-Text="CurrentMessage"/>
+                <MemoEdit Disabled="Disabled" Rows="5" Placeholder="@PlaceHolder" KeyPress="OnKeyPressed" @bind-Text="CurrentMessage"/>
             </FieldBody>
         }
         @if(_chatClient.Chats.Count >= 7)
@@ -68,7 +67,6 @@
 @code {
 
     GptChatClient? _chatClient;
-    MemoEdit _memo;
 
     private string CurrentMessage { get; set; }= "";
 
@@ -80,6 +78,12 @@
         _chatClient = await ChatService.GetChatClient();
         _chatClient.IsClientTyping += OnClientTypingChanged;
         _chatClient.NewChat += OnNewChat;
+        _chatClient.MsgUpdated += ChatClientOnMsgUpdated;;
+    }
+
+    private void ChatClientOnMsgUpdated(object? sender, EventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnClientTypingChanged(object? sender, bool e)
@@ -100,7 +104,7 @@
         if (isSubmit && _chatClient!=null)
         {
             var msg = CurrentMessage;
-            await _chatClient.AddQuestion(msg);
+            await _chatClient.AddQuestionStream(msg);
         }
     }
 
@@ -117,7 +121,6 @@
         }
     }
 
-    
 
 }
 
