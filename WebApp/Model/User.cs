@@ -36,6 +36,12 @@ namespace WebApp.Model
             RegisterDatetime = DateTime.Now;
         }
 
+        public void UpdatePassword(string password)
+        {
+            Salt = GenerateSalt();
+            PasswordHash = GetHash(password, Salt);
+        }
+
         private static string GenerateSalt()
         {
             var salt = new byte[128 / 8]; 

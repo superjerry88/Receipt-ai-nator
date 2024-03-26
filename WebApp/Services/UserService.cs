@@ -29,4 +29,9 @@ public class UserService
             Console.WriteLine($"Unable to find user: {userid}");
         }
     }
+
+    public async Task UpdatePassword(User user)
+    {
+        await RezApi.DbManager.User.AddOrUpdateUser(user);
+    }
 }
