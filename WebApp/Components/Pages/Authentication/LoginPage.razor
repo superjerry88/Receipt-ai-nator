@@ -89,7 +89,7 @@
         {
             //todo: Make session lifetime configurable
             await CookieService.SetCookie(RezApi.Jwt.Generate(user));
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/pageAnalytic");
         }
         else
         {
