@@ -1,0 +1,83 @@
+﻿@inject CurrentSession CurrentSession
+@page "/Reward/Redeem"
+
+<Breadcrumb>
+    <BreadcrumbItem>
+        <BreadcrumbLink To="/Reward">Reward</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbItem Active>
+        <BreadcrumbLink To="#">Redeem</BreadcrumbLink>
+    </BreadcrumbItem>
+</Breadcrumb>
+
+<div class="max-w-5xl">
+    <Card Margin="Margin.Is4.FromBottom">
+        <CardBody>
+            <CardTitle Size="4">Reward Balance: @User?.RewardPoints</CardTitle>
+        </CardBody>
+    </Card>
+    
+    <CardDeck>
+        <Card Class="mr-2 mb-6">
+            <CardImage Source="/img/coffee.jpg" Alt="Card image cap 9" ></CardImage>
+            <CardBody>
+                <CardTitle Size="5">RM5 Off Brand XYZ Coffee</CardTitle>
+                <CardText>
+                    500 Points
+                </CardText>
+                <Button Color="Color.Success">Claim</Button>
+            </CardBody>
+        </Card>
+        
+        <Card Class="mr-2 mb-6">
+            <CardImage Source="/img/fruits.jpg" Alt="Card image cap 9"></CardImage>
+            <CardBody>
+                <CardTitle Size="5">RM15 Off XYZ Grocer</CardTitle>
+                <CardText>
+                    1500 Points
+                </CardText>
+                <Button Color="Color.Success">Claim</Button>
+            </CardBody>
+        </Card>
+    </CardDeck>
+    
+    <CardDeck>
+        <Card Class="mr-2 mb-2">
+            <CardImage Source="/img/icecream.jpg" Alt="Card image cap 9" ></CardImage>
+            <CardBody>
+                <CardTitle Size="5">RM10 Off Ice Cream X</CardTitle>
+                <CardText>
+                    1000 Points
+                </CardText>
+                <Button Color="Color.Success">Claim</Button>
+            </CardBody>
+        </Card>
+        
+        <Card Class="mr-2 mb-2">
+            <CardImage Source="/img/popcorn.jpg" Alt="Card image cap 9"></CardImage>
+            <CardBody>
+                <CardTitle Size="5">RM10 Off Popcorn Z</CardTitle>
+                <CardText>
+                    1000 Points
+                </CardText>
+                <Button Color="Color.Success">Claim</Button>
+            </CardBody>
+        </Card>
+    </CardDeck>
+
+</div>
+
+@code {
+    public User? User { get; set; } 
+    public List<Reward> Rewards { get; set; } = new List<Reward>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await CurrentSession.GetUser();
+        if (User != null)
+        {
+            Rewards = await RezApi.DbManager.Reward.GetRewards(User.Id);
+            Rewards = Rewards.OrderByDescending(x => x.CreatedAt).ToList();
+        }
+    }
+}

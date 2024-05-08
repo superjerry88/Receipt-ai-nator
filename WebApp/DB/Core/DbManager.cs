@@ -11,6 +11,7 @@ namespace WebApp.DB.Core
         public DbUser User => Get<DbUser>();
         public DbGptUsage GptUsage => Get<DbGptUsage>();
         public DbScanTask ScanTask => Get<DbScanTask>();
+        public DbReward Reward => Get<DbReward>();
 
 
         public void InitializeDb()

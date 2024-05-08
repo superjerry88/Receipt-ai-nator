@@ -1,0 +1,97 @@
+﻿@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+@page "/Reward"
+
+<div class="max-w-5xl">
+    <Card Margin="Margin.Is4.FromBottom">
+        <CardBody>
+            <CardTitle Size="4">Reward points</CardTitle>
+            <CardText>
+                Your current reward points: <Badge Color="Color.Primary">@User?.RewardPoints</Badge>
+            </CardText>
+                
+                
+            <Button Color="Color.Primary" Block Class="flex items-center justify-center" Clicked="GoToRedeem">
+                 Redeem Reward
+            </Button>
+            <br/>
+            <br/>
+            
+            <CardText>
+                Check your point redemption history
+            </CardText>
+            <Button Color="Color.Success" Block Class="flex items-center justify-center" Disabled Clicked="GoToClaim">
+                History
+            </Button>
+        </CardBody>
+        
+
+    </Card>
+
+    <Card>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHeaderCell>Type</TableHeaderCell>
+                    <TableHeaderCell>Date</TableHeaderCell>
+                    <TableHeaderCell>Points</TableHeaderCell>
+                    <TableHeaderCell>Detail</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <Virtualize Items="Rewards" Context="reward">
+                    <TableRow>
+                        <TableRowCell>
+                            @if (reward.RewardType == RewardType.ScanReward)
+                            {
+                                <Badge Color="Color.Success">Scan Reward</Badge>
+                            }
+                            else
+                            {
+                                <Badge Color="Color.Warning">@reward.RewardType</Badge>
+                            }
+                        </TableRowCell>
+                        <TableRowCell>
+                            @reward.CreatedAt.ToString("D")
+                        </TableRowCell>
+                        <TableRowCell>
+                            @reward.Value
+                        </TableRowCell>
+                        <TableRowCell>
+                            @reward.Title
+                        </TableRowCell>
+                    </TableRow>
+                </Virtualize>
+            </TableBody>
+        </Table>
+    </Card>
+
+</div>
+
+
+
+@code {
+    public List<Reward> Rewards { get; set; } = new List<Reward>();
+    public User? User { get; set; } 
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await CurrentSession.GetUser();
+        if (User != null)
+        {
+            Rewards = await RezApi.DbManager.Reward.GetRewards(User.Id);
+            Rewards = Rewards.OrderByDescending(x => x.CreatedAt).ToList();
+        }
+    }
+
+    private void GoToRedeem()
+    {
+        NavigationManager.NavigateTo("/Reward/Redeem");
+    }
+
+    private void GoToClaim()
+    {
+        NavigationManager.NavigateTo("/Reward/Claim");
+    }
+
+}

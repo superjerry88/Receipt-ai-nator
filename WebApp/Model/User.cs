@@ -22,6 +22,9 @@ namespace WebApp.Model
         public bool HasOpenAiKey => !string.IsNullOrEmpty(EncryptedOpenAiKey);
         public string EncryptedOpenAiKey { get; set; }
         public int FreeTokenBalance { get; set; } = 20000;
+
+        public int RewardPoints { get; set; } = 0;
+
         public List<ApiInfo> ApiKeys { get; set; } = new List<ApiInfo>();
 
         public User(UserSignUp signUp)
@@ -83,6 +86,12 @@ namespace WebApp.Model
         public async Task RevokeKey(ApiInfo key)
         {
             key.IsActive = false;
+            await RezApi.DbManager.User.AddOrUpdateUser(this);
+        }
+
+        public async Task AddReward(int points)
+        {
+            RewardPoints += points;
             await RezApi.DbManager.User.AddOrUpdateUser(this);
         }
     }

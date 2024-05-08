@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using WebApp.DB.Core;
 using WebApp.Engine;
 using WebApp.Model.Images;
 using WebApp.Services;
@@ -21,6 +22,8 @@ public class ScanTask
     public ScanResult? Result { get; set; }
     public TimeSpan TimeTaken { get; set; }
     public ImageInfo Image { get; set; }
+
+    private const int RewardPerReceipt = 5;
 
     //welcome to code horror... Bson for mongodb, Json for newtonsoft, System.Text.Json for swagger...
     [BsonIgnore]
@@ -65,6 +68,8 @@ public class ScanTask
         {
             await RezApi.Users.ConsumeToken(Image.UserId, Result.TokenConsumed);
         }
+
+        await GetReward();
         await RezApi.DbManager.ScanTask.AddOrUpdateTask(this);
     }
 
@@ -82,5 +87,18 @@ public class ScanTask
             receipt.ReceiptIndex = i;
         }
         return receipts;
+    }
+
+    public async Task GetReward()
+    {
+        if (Result == null) return;
+        foreach (var receipt in Result.Receipts)
+        {
+            var reward = RewardFactory.CreateReward(Image.UserId,receipt.ReceiptId, $"Scan Reward - {receipt.ShopName}", RewardType.ScanReward, RewardPerReceipt);
+            await RezApi.DbManager.Reward.AddReward(reward);
+
+            var user = RezApi.Users.GetUser(Image.UserId);
+            if (user != null) await user.AddReward(RewardPerReceipt);
+        }
     }
 }
