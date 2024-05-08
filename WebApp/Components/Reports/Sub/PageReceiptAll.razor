@@ -1,0 +1,69 @@
+﻿@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+@page "/Receipts"
+
+<div class="max-w-5xl">
+    <Card>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHeaderCell>Shop</TableHeaderCell>
+                    <TableHeaderCell>Total</TableHeaderCell>
+                    <TableHeaderCell>Scanned Date</TableHeaderCell>
+                    <TableHeaderCell>Action</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <Virtualize Items="Receipts" Context="rec">
+                    <TableRow>
+                        <TableRowCell>
+                            @rec.ShopName
+                        </TableRowCell>
+                        <TableRowCell>
+                            RM @rec.TotalPrice.ToString("##.00")
+                        </TableRowCell>
+                        <TableRowCell>
+                            @GetDateAdded(rec).ToString("d")
+                        </TableRowCell>
+                        <TableRowCell>
+                            <Button Clicked="() => GoToReceipt(rec)" Color="Color.Primary">View</Button>
+                        </TableRowCell>
+                    </TableRow>
+                </Virtualize>
+            </TableBody>
+        </Table>
+    </Card>
+    
+</div>
+
+
+
+@code {
+    public List<ScanTask> Results { get; set; } = new List<ScanTask>();
+    public List<Receipt> Receipts { get; set; } = new List<Receipt>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentUser = await CurrentSession.GetUser();
+        if (currentUser != null)
+        {
+            Results = RezApi.Jobs.GetJobsByUser(currentUser).OrderByDescending(c=>c.CreatedAt).ToList();
+            Receipts = Results.Where(c=> c.Result!=null).Select(c => c.Result).SelectMany(c => c.Receipts).ToList();
+        }
+    }
+
+    public string GetTaskId(Receipt receipt)
+    {
+        return Results.FirstOrDefault(c => c.Result != null && c.Result.Receipts.Contains(receipt))?.Id ?? "";
+    }
+
+    public DateTime GetDateAdded(Receipt receipt)
+    {
+        return Results.FirstOrDefault(c => c.Result != null && c.Result.Receipts.Contains(receipt))?.CreatedAt ?? receipt.DateTime;
+    }
+
+    public void GoToReceipt(Receipt receipt)
+    {
+        NavigationManager.NavigateTo($"/Reports/{GetTaskId(receipt)}/{receipt.ReceiptIndex}");
+    }
+}

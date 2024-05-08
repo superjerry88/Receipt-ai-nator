@@ -1,0 +1,76 @@
+﻿@page "/pageAnalytic"
+@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+
+<div class="grid gap-4 lg:gap-8 md:grid-cols-3 p-8 pt-20">
+    <AnalyticsContainer Header="Total Receipts (All Time)" Data="@Analytic.TotalReceiptsAllTime">
+        <span>
+            This Month: @Analytic.TotalReceiptsThisMonth<br />
+            Today: @Analytic.TotalReceiptsToday
+        </span>
+    </AnalyticsContainer>
+
+    <AnalyticsContainer Header="Total Spent (All Time)" Data="@Analytic.TotalSpentAllTime.FixString(true)">
+        <span>
+            This Month: @Analytic.TotalSpentThisMonth.FixString(true)<br />
+            Today: @Analytic.TotalSpentToday.FixString(true)
+        </span>
+    </AnalyticsContainer>
+
+    <AnalyticsContainer Header="Total Tax Paid (All Time)" Data="@Analytic.TotalTaxPaidAllTime.FixString(true)">
+        <span>
+            This Month: @Analytic.TotalTaxPaidThisMonth.FixString(true)<br />
+            Today: @Analytic.TotalTaxPaidToday.FixString(true)
+        </span>
+    </AnalyticsContainer>
+
+    <AnalyticsContainerCollapse Header="Highest Spending Categories (All Time)">
+        @foreach (var category in Analytic.CategorySpendingAllTime) 
+        {
+            <AnalyticsInfo Header="@category.Key" Percentage="@(category.Value / Analytic.TotalSpentAllTime)">@category.Value.FixString(true)</AnalyticsInfo>
+        }
+    </AnalyticsContainerCollapse>
+
+    <AnalyticsContainerCollapse Header="Highest Spending Categories (This Month)">
+        @foreach (var category in Analytic.CategorySpendingThisMonth)
+        {
+            <AnalyticsInfo Header="@category.Key" Percentage="@(category.Value / Analytic.TotalSpentThisMonth)">@category.Value.FixString(true)</AnalyticsInfo>
+        }
+    </AnalyticsContainerCollapse>
+
+    <AnalyticsContainerCollapse Header="Highest Spending Receipts (All Time)">
+        @foreach (var receipt in Analytic.TopSpendingAllTime) 
+        {
+            <AnalyticsInfo Header="@receipt.ShopName" Percentage="@(receipt.TotalPrice / Analytic.TotalSpentAllTime)" TaskId="@receipt.TaskId">
+                @receipt.TotalPrice.FixString(true)
+            </AnalyticsInfo>
+        }
+    </AnalyticsContainerCollapse>
+
+    <AnalyticsContainerCollapse Header="Highest Spending Receipts (This Month)">
+        @foreach (var receipt in Analytic.TopSpendingThisMonth)
+        {
+            <AnalyticsInfo Header="@receipt.ShopName" Percentage="@(receipt.TotalPrice / Analytic.TotalSpentThisMonth)" TaskId="@receipt.TaskId">
+                @receipt.TotalPrice.FixString(true)
+            </AnalyticsInfo>
+        }
+    </AnalyticsContainerCollapse>
+
+</div>
+
+@code {
+
+    public Analytic Analytic { get; set; }  = new Analytic();
+    public bool IsLoaded { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+       var currentUser = await CurrentSession.GetUser();
+       if (currentUser != null)
+       {
+           Analytic = await RezApi.Analytic.GetAnalytics(currentUser);
+       }
+        IsLoaded = true;
+    }
+
+}

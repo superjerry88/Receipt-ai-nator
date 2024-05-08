@@ -1,0 +1,106 @@
+﻿@inject CurrentSession CurrentSession
+@inject NavigationManager NavigationManager
+@using System.Globalization
+
+<div class="max-w-5xl">
+        <Card>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell>Status</TableHeaderCell>
+                        <TableHeaderCell>Dates</TableHeaderCell>
+                        <TableHeaderCell>Action</TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <Virtualize Items="Results" Context="res">
+                        <TableRow>
+                            <TableRowCell>
+                                @if (res.IsCompleted && !res.IsError)
+                                {
+                                    <Badge Color="Color.Success">Done</Badge>
+                                }
+                                else if (res.IsError)
+                                {
+                                    <Badge Color="Color.Danger">Error</Badge>
+                                }
+                                else if (res.IsTerminated)
+                                {
+                                    <Badge Color="Color.Danger">Terminated</Badge>
+                                }
+                                else
+                                {
+                                    <Badge Color="Color.Info">Processing</Badge>
+                                }
+                            </TableRowCell>
+                            <TableRowCell>
+
+                                <Tooltip Text="@res.CreatedAt.ToString(CultureInfo.InvariantCulture)">
+                                    @GetRelativeTimeString(res.CreatedAt)
+                                </Tooltip>
+                            </TableRowCell>
+                            <TableRowCell>
+                                <Button Clicked="() => GoToReport(res.Id)" Color="Color.Primary">View</Button>
+                            </TableRowCell>
+                        </TableRow>
+                    </Virtualize>
+                </TableBody>
+            </Table>
+        </Card>
+    }
+</div>
+
+
+
+@code {
+    public List<ScanTask> Results { get; set; } = new List<ScanTask>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentUser = await CurrentSession.GetUser();
+        if (currentUser != null)
+        {
+            Results = RezApi.Jobs.GetJobsByUser(currentUser).OrderByDescending(c=>c.CreatedAt).ToList();
+        }
+    }
+
+    public void GoToReport(string taskId)
+    {
+        NavigationManager.NavigateTo($"/Reports/{taskId}");
+    }
+
+    public string GetRelativeTimeString(DateTime pastTime)
+    {
+        //ty mr gpt
+        var timeSpan = DateTime.Now.ToLocalTime() - pastTime.ToLocalTime();
+        if (timeSpan.TotalSeconds < 60)
+        {
+            return $"{timeSpan.Seconds}s ago";
+        }
+        if (timeSpan.TotalMinutes < 60)
+        {
+            return $"{timeSpan.Minutes} minute{(timeSpan.Minutes > 1 ? "s" : "")} ago";
+        }
+        if (timeSpan.TotalHours < 24)
+        {
+            return $"{timeSpan.Hours} hour{(timeSpan.Hours > 1 ? "s" : "")} ago";
+        }
+        if (timeSpan.TotalDays < 7)
+        {
+            return $"{timeSpan.Days} day{(timeSpan.Days > 1 ? "s" : "")} ago";
+        }
+        if (timeSpan.TotalDays < 30)
+        {
+            var weeks = (int)Math.Floor(timeSpan.TotalDays / 7);
+            return $"{weeks} week{(weeks > 1 ? "s" : "")} ago";
+        }
+        if (timeSpan.TotalDays < 365)
+        {
+            var months = (int)Math.Floor(timeSpan.TotalDays / 30);
+            return $"{months} month{(months > 1 ? "s" : "")} ago";
+        }
+        var years = (int)Math.Floor(timeSpan.TotalDays / 365);
+        return $"{years} year{(years > 1 ? "s" : "")} ago";
+    }
+
+}
