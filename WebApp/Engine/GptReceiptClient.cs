@@ -62,7 +62,7 @@ public class GptReceiptClient : IJob
                     ),
                 },
                 MaxTokens = 4096,
-                Model = Models.Gpt_4_vision_preview,
+                Model = Models.Gpt_4o_2024_05_13,
                 N = 1
             }
         );
